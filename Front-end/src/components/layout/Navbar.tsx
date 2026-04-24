@@ -17,45 +17,45 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-sm">
+    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">SB</span>
+          <Link to="/" className="flex items-center space-x-3 group">
+            <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all group-hover:scale-105">
+              <span className="text-white text-xl tracking-tight">SB</span>
             </div>
-            <span className="font-bold text-xl hidden sm:block">The Swasth Bharat</span>
+            <span className="text-xl hidden sm:block text-gray-900 group-hover:text-primary transition-colors">The Swasth Bharat</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-700 hover:text-primary transition-colors">
+          <div className="hidden md:flex items-center space-x-1">
+            <Link to="/" className="px-4 py-2 text-gray-700 hover:text-primary rounded-xl hover:bg-primary/5 transition-all">
               Home
             </Link>
-            
+
             {/* About Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setIsAboutDropdownOpen(!isAboutDropdownOpen)}
-                className="flex items-center space-x-1 text-gray-700 hover:text-primary transition-colors"
+                className="flex items-center space-x-1 px-4 py-2 text-gray-700 hover:text-primary rounded-xl hover:bg-primary/5 transition-all"
               >
                 <span>About</span>
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className={`w-4 h-4 transition-transform ${isAboutDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               {isAboutDropdownOpen && (
-                <div className="absolute top-full mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                <div className="absolute top-full mt-2 w-52 bg-white rounded-2xl shadow-xl py-2 border border-gray-100 backdrop-blur-md">
                   <Link
                     to="/about"
                     onClick={() => setIsAboutDropdownOpen(false)}
-                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                    className="block px-4 py-3 text-gray-700 hover:bg-primary/5 hover:text-primary transition-all rounded-xl mx-2"
                   >
                     Know About Us
                   </Link>
                   <Link
                     to="/careers"
                     onClick={() => setIsAboutDropdownOpen(false)}
-                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+                    className="block px-4 py-3 text-gray-700 hover:bg-primary/5 hover:text-primary transition-all rounded-xl mx-2"
                   >
                     Careers
                   </Link>
@@ -63,33 +63,33 @@ export function Navbar() {
               )}
             </div>
 
-            <Link to="/blogs" className="text-gray-700 hover:text-primary transition-colors">
+            <Link to="/blogs" className="px-4 py-2 text-gray-700 hover:text-primary rounded-xl hover:bg-primary/5 transition-all">
               Blogs
             </Link>
-            <Link to="/find-doctors" className="text-gray-700 hover:text-primary transition-colors">
+            <Link to="/find-doctors" className="px-4 py-2 text-gray-700 hover:text-primary rounded-xl hover:bg-primary/5 transition-all">
               Find Doctors
             </Link>
-            <Link to="/donations" className="text-gray-700 hover:text-primary transition-colors">
+            <Link to="/donations" className="px-4 py-2 text-gray-700 hover:text-primary rounded-xl hover:bg-primary/5 transition-all">
               Donations
             </Link>
-            <Link to="/contact" className="text-gray-700 hover:text-primary transition-colors">
+            <Link to="/contact" className="px-4 py-2 text-gray-700 hover:text-primary rounded-xl hover:bg-primary/5 transition-all">
               Contact
             </Link>
           </div>
 
           {/* Right Side - Login/Profile */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
             {!isLoggedIn ? (
               <>
                 <Link
                   to="/login"
-                  className="text-gray-700 hover:text-primary transition-colors"
+                  className="px-5 py-2.5 text-gray-700 hover:text-primary rounded-xl hover:bg-primary/5 transition-all"
                 >
                   Login
                 </Link>
                 <Link
                   to="/signup"
-                  className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                  className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-2.5 rounded-xl hover:shadow-lg transition-all hover:-translate-y-0.5"
                 >
                   Sign Up
                 </Link>
@@ -98,12 +98,12 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-blue-600 transition-colors"
+                  className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center hover:shadow-lg transition-all hover:scale-105"
                 >
                   <User className="w-5 h-5" />
                 </button>
                 {isProfileDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                  <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-xl py-2 border border-gray-100 backdrop-blur-md">
                     <Link
                       to="/dashboard"
                       onClick={() => setIsProfileDropdownOpen(false)}
