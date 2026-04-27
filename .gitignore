@@ -1,5 +1,6 @@
 # dependencies
 Front-end/node_modules
+Backend/node_modules
 
 # build files
 Front-end/dist
@@ -13,3 +14,6 @@ Front-end/.env
 # OS files
 .DS_Store
 Thumbs.db
+
+# env
+Backend/.env  
