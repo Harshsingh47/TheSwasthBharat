@@ -17,13 +17,20 @@ model User {
   name      String
   email     String   @unique
   phone     String?
-  password  String
+  password  String?
+
+  googleId  String?  @unique
+  authProvider String @default("EMAIL")   // ✅ MUST exist
+  isEmailVerified Boolean @default(false) // ✅ MUST exist
+  avatarUrl String?                       // ✅ MUST exist
+
   role      Role
   createdAt DateTime @default(now())
 
-  // Relations
   doctorProfile  DoctorProfile?
   patientProfile PatientProfile?
+
+  appointments   Appointment[]
 }
 
 model DoctorProfile {
@@ -57,6 +64,8 @@ model DoctorProfile {
   consultationMode    String? // ONLINE / OFFLINE / BOTH
 
   user User @relation(fields: [userId], references: [id])
+  appointments Appointment[]   // ✅ ADD THIS
+  availabilities DoctorAvailability[]   // ✅ ADD THIS
 }
 
 model PatientProfile {
@@ -81,4 +90,38 @@ model PatientProfile {
   volunteerInterest Boolean @default(false)
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model Appointment {
+  id        String   @id @default(uuid())
+  patientId String
+  doctorId  String
+
+  date      DateTime
+  status    AppointmentStatus @default(PENDING)
+  reason    String?
+
+  createdAt DateTime @default(now())
+
+  patient User @relation(fields: [patientId], references: [id])
+  doctor  DoctorProfile @relation(fields: [doctorId], references: [id])
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model DoctorAvailability {
+  id         String @id @default(uuid())
+  doctorId   String
+
+  dayOfWeek  Int     // 0 = Sunday, 1 = Monday...
+  startTime  String  // "09:00"
+  endTime    String  // "17:00"
+  slotDuration Int   // in minutes
+
+  doctor DoctorProfile @relation(fields: [doctorId], references: [id])
 }

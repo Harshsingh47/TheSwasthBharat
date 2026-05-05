@@ -1,4 +1,4 @@
-const { signupService, loginService } = require("../services/auth.service");
+const { signupService, loginService, googleAuthService } = require("../services/auth.service");
 
 const getErrorStatus = (message) => {
   if (message === "User already exists") return 409;
@@ -12,10 +12,6 @@ exports.signup = async (req, res) => {
   try {
     const { name, email, phone, password, role } = req.body;
 
-    if (!name || !email || !phone || !password || !role) {
-      return res.status(422).json({ message: "All fields are required" });
-    }
-
     await signupService({ name, email, phone, password, role });
 
     res.status(201).json({ message: "Signup successful. Please login." });
@@ -28,10 +24,6 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(422).json({ message: "Email and password are required" });
-    }
 
     const { accessToken, refreshToken, user } = await loginService(email, password);
 
@@ -50,5 +42,28 @@ exports.login = async (req, res) => {
     });
   } catch (error) {
     res.status(getErrorStatus(error.message)).json({ message: error.message });
+  }
+};
+
+exports.googleLogin = async (req, res) => {
+  try {
+    const { token, role } = req.body;
+
+    const { accessToken, refreshToken, user } = await googleAuthService(token, role);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.json({
+      message: "Google Login successful",
+      accessToken,
+      user,
+    });
+  } catch (error) {
+    res.status(401).json({ message: error.message });
   }
 };
