@@ -63,25 +63,13 @@ const item = {
 
 export function Reviews() {
   return (
-    <section className="py-24 px-4 bg-white">
+    <section className="py-20 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="inline-block px-4 py-1.5 bg-amber-50 rounded-full text-amber-700 text-sm tracking-wide mb-4">
-              TRUSTED BY THOUSANDS
-            </span>
-            <h2 className="text-4xl md:text-5xl mb-4 text-gray-900">
-              What Our Users Say
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Join thousands of satisfied patients who found their perfect healthcare match
-            </p>
-          </motion.div>
+        <div className="mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+            User <span className="text-blue-600">Reviews</span>
+          </h2>
+          <p className="text-gray-500">What our users say about their experience with Swasth Bharat</p>
         </div>
 
         <motion.div
@@ -95,33 +83,32 @@ export function Reviews() {
             <motion.div
               key={review.id}
               variants={item}
-              className="group bg-gradient-to-br from-white to-gray-50 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-primary/20"
+              className="bg-gray-50 p-6 rounded-2xl border border-gray-100 hover:border-blue-200 transition-colors"
             >
-              <div className="flex gap-1 mb-4">
+              <div className="flex gap-1 mb-3">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-5 h-5 ${
+                    className={`w-4 h-4 ${
                       i < review.rating
-                        ? 'fill-amber-400 text-amber-400'
+                        ? 'fill-orange-400 text-orange-400'
                         : 'fill-gray-200 text-gray-200'
-                    } transition-all duration-300 group-hover:scale-110`}
-                    style={{ transitionDelay: `${i * 50}ms` }}
+                    }`}
                   />
                 ))}
               </div>
 
-              <p className="text-gray-700 mb-6 leading-relaxed">
+              <p className="text-gray-600 mb-6 text-sm leading-relaxed">
                 "{review.text}"
               </p>
 
-              <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
-                  <span className="text-white">{review.name.charAt(0)}</span>
+              <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
+                <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs">
+                  {review.name.charAt(0)}
                 </div>
                 <div>
-                  <p className="text-gray-900">{review.name}</p>
-                  <p className="text-sm text-gray-500">{review.location}</p>
+                  <p className="text-sm font-bold text-gray-900">{review.name}</p>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-wider">{review.location}</p>
                 </div>
               </div>
             </motion.div>

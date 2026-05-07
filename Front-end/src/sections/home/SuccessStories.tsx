@@ -43,31 +43,13 @@ const item = {
 
 export function SuccessStories() {
   return (
-    <section className="py-24 px-4 bg-gradient-to-br from-[#F5F5DC] via-[#FAF8F3] to-[#F5F5DC] relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-      </div>
-
+    <section className="py-20 px-4 bg-gray-50">
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="inline-block px-4 py-1.5 bg-white/60 backdrop-blur-sm rounded-full text-gray-700 text-sm tracking-wide mb-4 border border-gray-200">
-              PATIENT TESTIMONIALS
-            </span>
-            <h2 className="text-4xl md:text-5xl mb-4 text-gray-900">
-              Stories That Inspire Us
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Real experiences from real people who found healing through our platform
-            </p>
-          </motion.div>
+        <div className="mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+            Patient <span className="text-blue-600">Success Stories</span>
+          </h2>
+          <p className="text-gray-500">Real experiences from people who found healing through our platform</p>
         </div>
 
         <motion.div
@@ -81,31 +63,28 @@ export function SuccessStories() {
             <motion.div
               key={story.id}
               variants={item}
-              className="group bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/50"
+              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
             >
-              <div className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
-                <ImageWithFallback
-                  src={story.image}
-                  alt={story.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-              </div>
-
-              <div className="p-8 relative">
-                <div className="absolute -top-6 left-8 w-12 h-12 bg-secondary rounded-2xl flex items-center justify-center shadow-lg">
-                  <Quote className="w-6 h-6 text-white" />
+              <div className="p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-100">
+                    <img
+                      src={story.image}
+                      alt={story.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900">{story.name}</p>
+                    <p className="text-xs text-gray-500">{story.location}</p>
+                  </div>
                 </div>
 
-                <p className="text-gray-700 mb-6 italic leading-relaxed pt-4">
-                  "{story.story}"
-                </p>
-
-                <div className="flex items-center gap-4">
-                  <div>
-                    <p className="text-gray-900">{story.name}</p>
-                    <p className="text-sm text-gray-500">{story.location}</p>
-                  </div>
+                <div className="relative">
+                  <Quote className="absolute -top-2 -left-2 w-8 h-8 text-blue-50 opacity-10" />
+                  <p className="text-gray-600 italic leading-relaxed relative z-10">
+                    "{story.story}"
+                  </p>
                 </div>
               </div>
             </motion.div>

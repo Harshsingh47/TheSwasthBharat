@@ -12,7 +12,7 @@ const {
 
 const { authMiddleware, isDoctor } = require("../middleware/auth.middleware");
 
-// GET profile
+// GET profile 
 
 router.get("/profile", authMiddleware, isDoctor, getDoctorProfile);
 

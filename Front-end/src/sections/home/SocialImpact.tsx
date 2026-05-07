@@ -43,32 +43,13 @@ export function SocialImpact() {
   };
 
   return (
-    <section className="py-24 px-4 bg-white relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-1/4 right-0 w-96 h-96 bg-secondary/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
-      </div>
-
+    <section className="py-20 px-4 bg-gray-50">
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-secondary/10 rounded-full text-secondary text-sm tracking-wide mb-4">
-              <Heart className="w-4 h-4" />
-              <span>MAKE A DIFFERENCE</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl mb-4 text-gray-900">
-              Our Social Impact
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Join us in making healthcare accessible to every corner of India. Your contribution can save lives and bring hope to thousands.
-            </p>
-          </motion.div>
+        <div className="mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+            Our <span className="text-blue-600">Social Impact</span>
+          </h2>
+          <p className="text-gray-500">Join us in making healthcare accessible to every corner of India</p>
         </div>
 
         <motion.div
@@ -85,63 +66,52 @@ export function SocialImpact() {
               <motion.div
                 key={campaign.id}
                 variants={item}
-                className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100"
+                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200"
               >
-                <div className="relative h-80 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
+                <div className="relative h-64 overflow-hidden bg-gray-100">
                   <ImageWithFallback
                     src={campaign.image}
                     alt={campaign.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
-                        <TrendingUp className="w-5 h-5 text-white" />
-                      </div>
-                      <span className="text-white/90 text-sm">{percentage.toFixed(0)}% funded</span>
-                    </div>
-                    <h3 className="text-2xl text-white mb-2">
-                      {campaign.title}
-                    </h3>
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-lg">
+                      {percentage.toFixed(0)}% FUNDED
+                    </span>
                   </div>
                 </div>
 
                 <div className="p-8">
-                  <p className="text-gray-700 mb-6 leading-relaxed">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                    {campaign.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-6 leading-relaxed">
                     {campaign.description}
                   </p>
 
                   <div className="mb-6">
-                    <div className="flex justify-between mb-3">
-                      <div>
-                        <p className="text-sm text-gray-500 mb-1">Raised</p>
-                        <p className="text-xl text-gray-900">{formatCurrency(campaign.raised)}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-500 mb-1">Goal</p>
-                        <p className="text-xl text-gray-900">{formatCurrency(campaign.goal)}</p>
-                      </div>
+                    <div className="flex justify-between mb-2">
+                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Progress</p>
+                      <p className="text-xs font-bold text-blue-600">{formatCurrency(campaign.raised)} / {formatCurrency(campaign.goal)}</p>
                     </div>
 
-                    <div className="relative w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="relative w-full h-2 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${percentage}%` }}
                         viewport={{ once: true }}
-                        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-                        className="absolute left-0 top-0 h-full bg-gradient-to-r from-secondary to-primary rounded-full"
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                        className="absolute left-0 top-0 h-full bg-blue-600 rounded-full"
                       />
                     </div>
                   </div>
 
                   <Link
                     to="/donations"
-                    className="group/btn flex items-center justify-center gap-2 w-full bg-[#FF7F50] text-white px-8 py-4 rounded-2xl hover:bg-[#ff6a35] transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                    className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md active:scale-95"
                   >
-                    <Heart className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
-                    <span className="text-lg">Donate Now</span>
+                    <Heart className="w-4 h-4" />
+                    <span>Donate Now</span>
                   </Link>
                 </div>
               </motion.div>

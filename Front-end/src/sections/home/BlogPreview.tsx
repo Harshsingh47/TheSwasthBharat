@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { ArrowRight, Clock } from 'lucide-react';
+import { ArrowRight, Clock, ChevronRight } from 'lucide-react';
 import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
 import { motion } from 'motion/react';
 
@@ -47,23 +47,20 @@ const item = {
 
 export function BlogPreview() {
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-white to-[#FAF8F3]">
+    <section className="py-20 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-4">
+        <div className="flex justify-between items-end mb-12">
           <div>
-            <span className="inline-block px-4 py-1.5 bg-primary/10 rounded-full text-primary text-sm tracking-wide mb-4">
-              HEALTH INSIGHTS
-            </span>
-            <h2 className="text-4xl md:text-5xl text-gray-900">
-              Health & Wellness Blog
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+              Health & Wellness <span className="text-blue-600">Blog</span>
             </h2>
+            <p className="text-gray-500">Expert health insights and wellness tips for a better life</p>
           </div>
           <Link
             to="/blogs"
-            className="group flex items-center gap-2 text-primary hover:gap-3 transition-all"
+            className="hidden md:flex items-center gap-1 text-blue-600 font-bold hover:underline"
           >
-            <span className="text-lg">View All Articles</span>
-            <ArrowRight className="w-5 h-5" />
+            View All Articles <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
 
@@ -78,45 +75,51 @@ export function BlogPreview() {
             <motion.div key={blog.id} variants={item}>
               <Link
                 to="/blogs"
-                className="group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-transparent hover:-translate-y-2"
+                className="group block bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
               >
-                <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
+                <div className="relative h-52 overflow-hidden bg-gray-100">
                   <ImageWithFallback
                     src={blog.image}
                     alt={blog.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                </div>
-
-                <div className="p-8">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-bold">
                       {blog.category}
                     </span>
-                    <div className="flex items-center gap-1.5 text-gray-500 text-sm">
-                      <Clock className="w-4 h-4" />
-                      <span>{blog.readTime}</span>
-                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <div className="flex items-center gap-2 text-gray-500 text-xs mb-3">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>{blog.readTime}</span>
                   </div>
 
-                  <h3 className="text-xl mb-3 text-gray-900 group-hover:text-primary transition-colors">
+                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors mb-2 leading-tight">
                     {blog.title}
                   </h3>
 
-                  <p className="text-gray-600 mb-4 leading-relaxed">
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                     {blog.description}
                   </p>
 
-                  <div className="flex items-center gap-2 text-primary group-hover:gap-3 transition-all">
-                    <span className="text-sm">Read More</span>
-                    <ArrowRight className="w-4 h-4" />
+                  <div className="flex items-center gap-1 text-blue-600 font-bold text-sm">
+                    <span>Read More</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </Link>
             </motion.div>
           ))}
         </motion.div>
+        
+        <Link
+          to="/blogs"
+          className="md:hidden flex items-center justify-center gap-1 text-blue-600 font-bold mt-8 border border-blue-600 py-3 rounded-xl"
+        >
+          View All Articles
+        </Link>
       </div>
     </section>
   );

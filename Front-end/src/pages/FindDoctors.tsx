@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { Search, MapPin, SlidersHorizontal, Star, MapPinIcon, X } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 
 export default function FindDoctors() {
+  const navigate = useNavigate();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [location, setLocation] = useState('');
@@ -102,6 +103,17 @@ export default function FindDoctors() {
     'Neurologist',
     'Ophthalmologist',
   ];
+
+  const handleBookAppointment = (doctorId: number) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      if (confirm('Please Login or Signup first to book an appointment. Would you like to login now?')) {
+        navigate('/login');
+      }
+      return;
+    }
+    navigate(`/book-appointment/${doctorId}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -363,12 +375,12 @@ export default function FindDoctors() {
                         >
                           View Profile
                         </Link>
-                        <Link
-                          to={`/book-appointment/${doctor.id}`}
+                        <button
+                          onClick={() => handleBookAppointment(doctor.id)}
                           className="flex-1 text-center bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
                         >
                           Book Appointment
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   </div>

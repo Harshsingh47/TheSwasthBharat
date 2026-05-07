@@ -1,9 +1,10 @@
-import { Link, useParams } from 'react-router';
+import { Link, useParams, useNavigate } from 'react-router';
 import { Star, MapPin, GraduationCap, Award, Clock, Phone, Mail, CheckCircle } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 
 export default function DoctorProfile() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   // Mock doctor data - in real app, fetch based on id
   const doctor = {
@@ -66,6 +67,17 @@ export default function DoctorProfile() {
       text: 'Great experience. The doctor was knowledgeable and the staff was helpful.',
     },
   ];
+
+  const handleBookAppointment = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      if (confirm('Please Login or Signup first to book an appointment. Would you like to login now?')) {
+        navigate('/login');
+      }
+      return;
+    }
+    navigate(`/book-appointment/${id}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -232,12 +244,12 @@ export default function DoctorProfile() {
                   ))}
                 </div>
               </div>
-              <Link
-                to={`/book-appointment/${doctor.id}`}
+              <button
+                onClick={handleBookAppointment}
                 className="block w-full bg-primary text-white text-center px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
               >
                 Book Appointment
-              </Link>
+              </button>
             </div>
           </div>
         </div>

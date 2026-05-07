@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Star, ArrowRight, BadgeCheck } from 'lucide-react';
+import { Star, ArrowRight, BadgeCheck, ChevronRight } from 'lucide-react';
 import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
 import { motion } from 'motion/react';
 
@@ -63,23 +63,20 @@ const item = {
 
 export function TopDoctors() {
   return (
-    <section className="py-24 px-4 bg-gradient-to-b from-white to-[#FAF8F3]">
+    <section className="py-20 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-4">
+        <div className="flex justify-between items-end mb-10">
           <div>
-            <span className="inline-block px-4 py-1.5 bg-primary/10 rounded-full text-primary text-sm tracking-wide mb-4">
-              VERIFIED PROFESSIONALS
-            </span>
-            <h2 className="text-4xl md:text-5xl text-gray-900">
-              Top Rated Doctors
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+              Top Rated <span className="text-blue-600">Doctors</span>
             </h2>
+            <p className="text-gray-500">Book appointments with our most recommended specialists</p>
           </div>
           <Link
             to="/find-doctors"
-            className="group flex items-center gap-2 text-primary hover:gap-3 transition-all"
+            className="hidden md:flex items-center gap-1 text-blue-600 font-bold hover:underline"
           >
-            <span className="text-lg">View All Doctors</span>
-            <ArrowRight className="w-5 h-5" />
+            View All <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
 
@@ -88,44 +85,61 @@ export function TopDoctors() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {topDoctors.map((doctor) => (
             <motion.div key={doctor.id} variants={item}>
               <Link
                 to={`/doctor/${doctor.id}`}
-                className="group block bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-transparent hover:-translate-y-2"
+                className="group block bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
               >
-                <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
+                <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                   <ImageWithFallback
                     src={doctor.image}
                     alt={doctor.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   {doctor.verified && (
-                    <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
-                      <BadgeCheck className="w-4 h-4 text-secondary" />
-                      <span className="text-xs text-gray-900">Verified</span>
+                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm p-1 rounded-lg">
+                      <BadgeCheck className="w-5 h-5 text-blue-600" />
                     </div>
                   )}
+                  <div className="absolute bottom-3 right-3 bg-white px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
+                    <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
+                    <span className="text-sm font-bold">{doctor.rating}</span>
+                  </div>
                 </div>
 
-                <div className="p-6">
-                  <h3 className="text-xl mb-1.5 text-gray-900">{doctor.name}</h3>
-                  <p className="text-gray-600 mb-3">{doctor.specialty}</p>
+                <div className="p-5">
+                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{doctor.name}</h3>
+                  <p className="text-blue-600 font-medium text-sm mb-3">{doctor.specialty}</p>
 
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    <span className="text-gray-900">{doctor.rating}</span>
-                    <span className="text-gray-500">({doctor.reviews})</span>
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                    <div className="text-xs text-gray-500">
+                      <p className="font-bold text-gray-700">{doctor.experience} Years</p>
+                      <p>Experience</p>
+                    </div>
+                    <div className="text-xs text-gray-500 text-right">
+                      <p className="font-bold text-gray-700">{doctor.reviews}</p>
+                      <p>Reviews</p>
+                    </div>
                   </div>
-
-                  <p className="text-sm text-gray-600">{doctor.experience} years experience</p>
+                  
+                  <button className="w-full mt-4 bg-blue-600 text-white py-2 rounded-xl font-bold hover:bg-blue-700 transition-colors">
+                    Book Appointment
+                  </button>
                 </div>
               </Link>
             </motion.div>
           ))}
         </motion.div>
+        
+        <Link
+          to="/find-doctors"
+          className="md:hidden flex items-center justify-center gap-1 text-blue-600 font-bold mt-8 border border-blue-600 py-3 rounded-xl"
+        >
+          View All Doctors
+        </Link>
       </div>
     </section>
   );

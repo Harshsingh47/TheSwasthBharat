@@ -1,75 +1,69 @@
-import { useState } from 'react';
-import { Calendar, Heart, User, Clock, Star, MapPin } from 'lucide-react';
-import { Link } from 'react-router';
+import { useState, useEffect } from 'react';
+import { Calendar, Heart, User, Clock, Star, MapPin, Loader2, Activity } from 'lucide-react';
+import { Link, useNavigate } from 'react-router';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'saved'>('upcoming');
+  const [userData, setUserData] = useState<any>(null);
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const upcomingAppointments = [
-    {
-      id: 1,
-      doctorName: 'Dr. Amit Sharma',
-      specialty: 'Cardiologist',
-      date: 'April 20, 2026',
-      time: '10:00 AM',
-      location: 'Heart Care Center, Connaught Place',
-      image: 'https://images.unsplash.com/photo-1678940805950-73f2127f9d4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBkb2N0b3IlMjBzbWlsaW5nfGVufDF8fHx8MTc3NjMyNzk5OHww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      id: 2,
-      doctorName: 'Dr. Priya Patel',
-      specialty: 'Pediatrician',
-      date: 'April 22, 2026',
-      time: '2:00 PM',
-      location: 'Child Care Clinic, Karol Bagh',
-      image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwYXRpZW50JTIwY29uc3VsdGF0aW9ufGVufDF8fHx8MTc3NjMxMDkwNHww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+      
+      if (!token) {
+        navigate('/login');
+        return;
+      }
 
-  const pastAppointments = [
-    {
-      id: 3,
-      doctorName: 'Dr. Rajesh Kumar',
-      specialty: 'Orthopedic Surgeon',
-      date: 'April 10, 2026',
-      time: '11:00 AM',
-      location: 'Bone & Joint Clinic, Dwarka',
-      image: 'https://images.unsplash.com/photo-1678940805950-73f2127f9d4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBkb2N0b3IlMjBzbWlsaW5nfGVufDF8fHx8MTc3NjMyNzk5OHww&ixlib=rb-4.1.0&q=80&w=1080',
-      reviewed: false,
-    },
-    {
-      id: 4,
-      doctorName: 'Dr. Sneha Reddy',
-      specialty: 'Dermatologist',
-      date: 'March 28, 2026',
-      time: '4:00 PM',
-      location: 'Skin Care Center, Vasant Vihar',
-      image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwYXRpZW50JTIwY29uc3VsdGF0aW9ufGVufDF8fHx8MTc3NjMxMDkwNHww&ixlib=rb-4.1.0&q=80&w=1080',
-      reviewed: true,
-    },
-  ];
+      try {
+        const baseUrl = import.meta.env.VITE_API_URL;
+        
+        // Fetch Profile
+        const profileEndpoint = role === 'DOCTOR' ? '/api/doctor/profile' : '/api/patient/profile';
+        const profileRes = await fetch(`${baseUrl}${profileEndpoint}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const profileData = await profileRes.json();
+        if (profileRes.ok) {
+          setUserData(profileData.profile);
+        }
 
-  const savedDoctors = [
-    {
-      id: 1,
-      name: 'Dr. Vikram Singh',
-      specialty: 'General Physician',
-      rating: 4.6,
-      reviews: 145,
-      fee: 500,
-      image: 'https://images.unsplash.com/photo-1678940805950-73f2127f9d4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBkb2N0b3IlMjBzbWlsaW5nfGVufDF8fHx8MTc3NjMyNzk5OHww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      id: 2,
-      name: 'Dr. Ananya Desai',
-      specialty: 'Neurologist',
-      rating: 4.8,
-      reviews: 203,
-      fee: 1200,
-      image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwYXRpZW50JTIwY29uc3VsdGF0aW9ufGVufDF8fHx8MTc3NjMxMDkwNHww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-  ];
+        // Fetch Appointments (only for patients for now)
+        if (role === 'PATIENT') {
+          const apptRes = await fetch(`${baseUrl}/api/appointments/my`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const apptData = await apptRes.json();
+          if (apptRes.ok) {
+            setAppointments(apptData.appointments || []);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="w-12 h-12 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  const upcomingAppointments = appointments.filter(a => a.status === 'PENDING' || a.status === 'CONFIRMED');
+  const pastAppointments = appointments.filter(a => a.status === 'COMPLETED' || a.status === 'CANCELLED');
+  const savedDoctors: any[] = []; // Still static or coming from profile if implemented
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -81,8 +75,8 @@ export default function Dashboard() {
               <User className="w-10 h-10 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Welcome, Rahul Sharma</h1>
-              <p className="text-gray-600">rahul.sharma@email.com</p>
+              <h1 className="text-3xl font-bold">Welcome, {userData?.user?.name || 'User'}</h1>
+              <p className="text-gray-600">{userData?.user?.email || 'User Account'}</p>
             </div>
           </div>
         </div>
@@ -174,23 +168,35 @@ export default function Dashboard() {
                   >
                     <div className="flex flex-col md:flex-row md:items-center justify-between">
                       <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                          <ImageWithFallback
-                            src={appointment.image}
-                            alt={appointment.doctorName}
-                            className="w-full h-full object-cover"
-                          />
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-blue-100 flex items-center justify-center flex-shrink-0">
+                          {appointment.doctor?.image ? (
+                            <ImageWithFallback
+                              src={appointment.doctor.image}
+                              alt={appointment.doctor.user?.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <User className="w-8 h-8 text-blue-600" />
+                          )}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-lg">{appointment.doctorName}</h3>
-                          <p className="text-gray-600">{appointment.specialty}</p>
+                          <h3 className="font-semibold text-lg">{appointment.doctor?.user?.name || 'Doctor'}</h3>
+                          <p className="text-gray-600">{appointment.doctor?.specialty || 'Healthcare Provider'}</p>
                           <div className="flex items-center text-sm text-gray-600 mt-1">
                             <Calendar className="w-4 h-4 mr-1" />
-                            {appointment.date} at {appointment.time}
+                            {new Date(appointment.date).toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })} at {new Date(appointment.date).toLocaleTimeString('en-IN', {
+                              hour: 'numeric',
+                              minute: '2-digit',
+                              hour12: true
+                            })}
                           </div>
                           <div className="flex items-center text-sm text-gray-600 mt-1">
                             <MapPin className="w-4 h-4 mr-1" />
-                            {appointment.location}
+                            {appointment.doctor?.location || 'Clinic Location'}
                           </div>
                         </div>
                       </div>
@@ -206,15 +212,36 @@ export default function Dashboard() {
                   </div>
                 ))}
                 {upcomingAppointments.length === 0 && (
-                  <div className="text-center py-12">
-                    <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-600">No upcoming appointments</p>
-                    <Link
-                      to="/find-doctors"
-                      className="inline-block mt-4 text-primary hover:underline"
-                    >
-                      Book an appointment
-                    </Link>
+                  <div className="py-8">
+                    <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 mb-8">
+                      <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-800">No upcoming appointments</h3>
+                      <p className="text-gray-500 mt-1">You don't have any scheduled visits at the moment.</p>
+                      <Link
+                        to="/find-doctors"
+                        className="inline-block mt-6 bg-primary text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors font-medium shadow-md"
+                      >
+                        Find a Doctor
+                      </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                      <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border border-green-200">
+                        <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-4 text-white">
+                          <Heart className="w-6 h-6" />
+                        </div>
+                        <h4 className="font-bold text-green-900 mb-2">Daily Health Tip</h4>
+                        <p className="text-green-800 text-sm italic">"Staying hydrated is key to maintaining energy levels and healthy skin. Aim for 8 glasses of water a day."</p>
+                      </div>
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200">
+                        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-4 text-white">
+                          <Activity className="w-6 h-6" />
+                        </div>
+                        <h4 className="font-bold text-blue-900 mb-2">Quick Checkup</h4>
+                        <p className="text-blue-800 text-sm">Review your health profile regularly to keep your information up to date for your doctors.</p>
+                        <Link to="/profile" className="text-blue-600 text-sm font-bold mt-2 inline-block hover:underline">Update Profile →</Link>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -230,19 +257,27 @@ export default function Dashboard() {
                   >
                     <div className="flex flex-col md:flex-row md:items-center justify-between">
                       <div className="flex items-center space-x-4 mb-4 md:mb-0">
-                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                          <ImageWithFallback
-                            src={appointment.image}
-                            alt={appointment.doctorName}
-                            className="w-full h-full object-cover"
-                          />
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
+                          {appointment.doctor?.image ? (
+                            <ImageWithFallback
+                              src={appointment.doctor.image}
+                              alt={appointment.doctor.user?.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <User className="w-8 h-8 text-gray-400" />
+                          )}
                         </div>
                         <div>
-                          <h3 className="font-semibold text-lg">{appointment.doctorName}</h3>
-                          <p className="text-gray-600">{appointment.specialty}</p>
+                          <h3 className="font-semibold text-lg">{appointment.doctor?.user?.name || 'Doctor'}</h3>
+                          <p className="text-gray-600">{appointment.doctor?.specialty}</p>
                           <div className="flex items-center text-sm text-gray-600 mt-1">
                             <Calendar className="w-4 h-4 mr-1" />
-                            {appointment.date} at {appointment.time}
+                            {new Date(appointment.date).toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })}
                           </div>
                         </div>
                       </div>
