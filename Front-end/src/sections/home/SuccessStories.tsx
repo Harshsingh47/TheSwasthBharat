@@ -43,13 +43,13 @@ const item = {
 
 export function SuccessStories() {
   return (
-    <section className="py-20 px-4 bg-gray-50">
+    <section className="py-12 px-4 bg-transparent relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-            Patient <span className="text-blue-600">Success Stories</span>
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+            Patient <span className="text-transparent bg-clip-text bg-brand-grad">Success Stories</span>
           </h2>
-          <p className="text-gray-500">Real experiences from people who found healing through our platform</p>
+          <p className="text-muted-foreground text-lg font-medium max-w-2xl mx-auto">Real experiences from people who found healing through our technology-driven community.</p>
         </div>
 
         <motion.div
@@ -57,34 +57,40 @@ export function SuccessStories() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-3 gap-10"
         >
           {successStories.map((story) => (
             <motion.div
               key={story.id}
               variants={item}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+              className="card-premium group border-primary/5 h-full"
             >
-              <div className="p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-100">
+              <div className="p-10 flex flex-col h-full">
+                <div className="flex items-center gap-5 mb-8">
+                  <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-primary/20 p-1 bg-white">
                     <img
                       src={story.image}
                       alt={story.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover rounded-xl"
                     />
                   </div>
                   <div>
-                    <p className="font-bold text-gray-900">{story.name}</p>
-                    <p className="text-xs text-gray-500">{story.location}</p>
+                    <p className="font-bold text-foreground text-lg font-montserrat">{story.name}</p>
+                    <p className="text-sm font-bold text-secondary uppercase tracking-wider">{story.location}</p>
                   </div>
                 </div>
 
-                <div className="relative">
-                  <Quote className="absolute -top-2 -left-2 w-8 h-8 text-blue-50 opacity-10" />
-                  <p className="text-gray-600 italic leading-relaxed relative z-10">
+                <div className="relative mt-auto">
+                  <Quote className="absolute -top-6 -left-6 w-12 h-12 text-primary/5 group-hover:text-primary/10 transition-colors" />
+                  <p className="text-muted-foreground italic leading-relaxed text-lg relative z-10 font-medium">
                     "{story.story}"
                   </p>
+                </div>
+                
+                <div className="mt-8 flex gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="w-2 h-2 rounded-full bg-cta" />
+                  ))}
                 </div>
               </div>
             </motion.div>

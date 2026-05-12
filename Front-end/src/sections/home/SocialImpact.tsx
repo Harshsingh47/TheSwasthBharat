@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Heart, TrendingUp } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
 import { motion } from 'motion/react';
 
@@ -43,13 +43,19 @@ export function SocialImpact() {
   };
 
   return (
-    <section className="py-20 px-4 bg-gray-50">
+    <section className="py-12 px-4 bg-transparent relative overflow-hidden">
+       {/* Background Decoration */}
+       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-5 pointer-events-none">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl animate-pulse-glow" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-success rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '4s' }} />
+      </div>
+
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-            Our <span className="text-blue-600">Social Impact</span>
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+            Our <span className="text-transparent bg-clip-text bg-brand-grad">Social Impact</span>
           </h2>
-          <p className="text-gray-500">Join us in making healthcare accessible to every corner of India</p>
+          <p className="text-muted-foreground text-lg font-medium max-w-2xl mx-auto">Join us in making healthcare accessible to every corner of India through community-driven initiatives.</p>
         </div>
 
         <motion.div
@@ -57,7 +63,7 @@ export function SocialImpact() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-10"
+          className="grid grid-cols-1 md:grid-cols-2 gap-12"
         >
           {socialImpact.map((campaign) => {
             const percentage = (campaign.raised / campaign.goal) * 100;
@@ -66,52 +72,52 @@ export function SocialImpact() {
               <motion.div
                 key={campaign.id}
                 variants={item}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-200"
+                className="card-premium h-full group border-primary/5"
               >
-                <div className="relative h-64 overflow-hidden bg-gray-100">
+                <div className="relative h-72 overflow-hidden bg-gray-100">
                   <ImageWithFallback
                     src={campaign.image}
                     alt={campaign.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute top-4 right-4">
-                    <span className="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-lg">
+                  <div className="absolute top-6 right-6">
+                    <span className="bg-white/90 backdrop-blur-md text-primary px-4 py-2 rounded-2xl text-xs font-bold shadow-xl border border-white/20">
                       {percentage.toFixed(0)}% FUNDED
                     </span>
                   </div>
                 </div>
 
-                <div className="p-8">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <div className="p-10">
+                  <h3 className="text-2xl font-bold text-foreground mb-4 font-montserrat">
                     {campaign.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                  <p className="text-muted-foreground mb-8 leading-relaxed font-medium">
                     {campaign.description}
                   </p>
 
-                  <div className="mb-6">
-                    <div className="flex justify-between mb-2">
-                      <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Progress</p>
-                      <p className="text-xs font-bold text-blue-600">{formatCurrency(campaign.raised)} / {formatCurrency(campaign.goal)}</p>
+                  <div className="mb-8">
+                    <div className="flex justify-between items-end mb-3">
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Campaign Progress</p>
+                      <p className="text-sm font-bold text-primary">{formatCurrency(campaign.raised)} <span className="text-muted-foreground font-medium">/ {formatCurrency(campaign.goal)}</span></p>
                     </div>
 
-                    <div className="relative w-full h-2 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
+                    <div className="relative w-full h-3 bg-gray-100 rounded-full overflow-hidden p-0.5 border border-gray-50">
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${percentage}%` }}
                         viewport={{ once: true }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
-                        className="absolute left-0 top-0 h-full bg-blue-600 rounded-full"
+                        className="absolute left-0 top-0 h-full bg-brand-grad rounded-full shadow-[0_0_10px_rgba(126,74,168,0.3)]"
                       />
                     </div>
                   </div>
 
                   <Link
                     to="/donations"
-                    className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md active:scale-95"
+                    className="flex items-center justify-center gap-3 w-full bg-cta-grad text-white px-8 py-4 rounded-2xl font-bold hover:shadow-[0_0_20px_rgba(249,115,6,0.4)] transition-all active:scale-[0.98]"
                   >
-                    <Heart className="w-4 h-4" />
-                    <span>Donate Now</span>
+                    <Heart className="w-5 h-5 fill-white" />
+                    <span>Support This Initiative</span>
                   </Link>
                 </div>
               </motion.div>

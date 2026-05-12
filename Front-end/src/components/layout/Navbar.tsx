@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { Menu, X, ChevronDown, User, Calendar, Heart, LogOut, Bell, MessageSquare, Briefcase, TrendingUp, Megaphone, PlusCircle } from 'lucide-react';
+import logo from '../brand/logo the swasth bharat (1).png';
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -53,7 +54,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm font-sans">
+    <nav className="sticky top-0 z-50 glass border-b border-white/20 font-sans">
       {/* Top Bar */}
       <div className="hidden md:block bg-gray-50 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
@@ -92,23 +93,25 @@ export function Navbar() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group py-2">
-            <img 
-              src="/src/assets/logo.png" 
-              alt="The Swasth Bharat" 
-              className="h-16 w-auto object-contain"
-            />
+          <Link to="/" className="flex items-center space-x-3 group py-2">
+            <div className="group-hover:scale-105 transition-transform bg-white/5 backdrop-blur-sm p-1 rounded-xl border border-white/10 group-hover:border-primary/30">
+              <img src={logo} alt="The Swasth Bharat" className="h-12 w-auto object-contain" />
+            </div>
+            <div className="flex flex-col leading-tight">
+              <span className="text-lg font-bold tracking-tight text-foreground font-montserrat">The Swasth Bharat</span>
+              <span className="text-[9px] text-primary font-bold tracking-[0.2em] uppercase">Healthcare Reimagined</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            <Link to="/" className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+            <Link to="/" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
               Home
             </Link>
             {isLoggedIn && (
-              <Link to="/dashboard" className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+              <Link to="/dashboard" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
                 Dashboard
               </Link>
             )}
@@ -118,7 +121,7 @@ export function Navbar() {
               <button
                 onMouseEnter={() => setIsAboutDropdownOpen(true)}
                 onMouseLeave={() => setIsAboutDropdownOpen(false)}
-                className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors"
               >
                 <span>About</span>
                 <ChevronDown className={`w-4 h-4 transition-transform ${isAboutDropdownOpen ? 'rotate-180' : ''}`} />
@@ -127,17 +130,17 @@ export function Navbar() {
                 <div 
                   onMouseEnter={() => setIsAboutDropdownOpen(true)}
                   onMouseLeave={() => setIsAboutDropdownOpen(false)}
-                  className="absolute top-full left-0 w-48 bg-white shadow-xl py-2 border border-gray-100 animate-in fade-in slide-in-from-top-1 duration-200"
+                  className="absolute top-full left-0 w-48 bg-white/90 backdrop-blur-xl shadow-2xl py-2 border border-white/20 animate-in fade-in slide-in-from-top-1 duration-200 rounded-xl"
                 >
                   <Link
                     to="/about"
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-primary/10 hover:text-primary transition-colors"
                   >
                     Know About Us
                   </Link>
                   <Link
                     to="/careers"
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                    className="block px-4 py-2 text-gray-700 hover:bg-primary/10 hover:text-primary transition-colors"
                   >
                     Careers
                   </Link>
@@ -145,16 +148,16 @@ export function Navbar() {
               )}
             </div>
 
-            <Link to="/blogs" className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+            <Link to="/blogs" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
               Blogs
             </Link>
-            <Link to="/find-doctors" className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+            <Link to="/find-doctors" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
               Find Doctors
             </Link>
-            <Link to="/donations" className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+            <Link to="/donations" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
               Donations
             </Link>
-            <Link to="/contact" className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+            <Link to="/contact" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
               Contact
             </Link>
           </div>
@@ -169,7 +172,7 @@ export function Navbar() {
             {!isLoggedIn ? (
               <Link
                 to="/login"
-                className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg active:scale-95"
+                className="bg-cta-grad text-white px-6 py-2.5 rounded-full font-bold hover:shadow-[0_0_20px_rgba(249,115,6,0.4)] transition-all active:scale-95 shadow-lg"
               >
                 Login / Sign Up
               </Link>

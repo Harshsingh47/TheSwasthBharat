@@ -1,83 +1,119 @@
 import { Link } from 'react-router';
-import { Star, ArrowRight, BadgeCheck, ChevronRight } from 'lucide-react';
-import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
+import { Star, Heart, Bookmark, Clock, User, Stethoscope, Baby, Bone, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
+
+const specialtyStyles = {
+  Cardiology: {
+    color: '#0d9488', // Teal
+    bg: '#f0fdfa',
+    border: '#99f6e4',
+    icon: Heart
+  },
+  Pediatrics: {
+    color: '#2563eb', // Blue
+    bg: '#eff6ff',
+    border: '#bfdbfe',
+    icon: Baby
+  },
+  Orthopedics: {
+    color: '#f43f5e', // Coral
+    bg: '#fff1f2',
+    border: '#fecdd3',
+    icon: Bone
+  },
+  Dermatology: {
+    color: '#9333ea', // Purple
+    bg: '#faf5ff',
+    border: '#e9d5ff',
+    icon: Sparkles
+  }
+};
 
 const topDoctors = [
   {
     id: 1,
     name: 'Dr. Amit Sharma',
-    specialty: 'Cardiologist',
+    initials: 'AS',
+    image: 'https://images.unsplash.com/photo-1678940805950-73f2127f9d4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBkb2N0b3IlMjBzbWlsaW5nfGVufDF8fHx8MTc3NjMyNzk5OHww&ixlib=rb-4.1.0&q=80&w=1080',
+    specialty: 'Cardiology',
     experience: 15,
     rating: 4.8,
-    reviews: 234,
-    image: 'https://images.unsplash.com/photo-1678940805950-73f2127f9d4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBkb2N0b3IlMjBzbWlsaW5nfGVufDF8fHx8MTc3NjMyNzk5OHww&ixlib=rb-4.1.0&q=80&w=1080',
-    verified: true,
+    reviews: 2340,
+    fee: 800,
+    quote: 'My goal is to help you lead a heart-healthy life through proactive care and simple lifestyle shifts.',
+    tags: ['Heart Failure', 'Arrhythmia', 'BP Care'],
+    availability: { status: 'today', time: '3:00 PM' }
   },
   {
     id: 2,
     name: 'Dr. Priya Patel',
-    specialty: 'Pediatrician',
+    initials: 'PP',
+    image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwYXRpZW50JTIwY29uc3VsdGF0aW9ufGVufDF8fHx8MTc3NjMxMDkwNHww&ixlib=rb-4.1.0&q=80&w=1080',
+    specialty: 'Pediatrics',
     experience: 12,
     rating: 4.9,
-    reviews: 312,
-    image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwYXRpZW50JTIwY29uc3VsdGF0aW9ufGVufDF8fHx8MTc3NjMxMDkwNHww&ixlib=rb-4.1.0&q=80&w=1080',
-    verified: true,
+    reviews: 3120,
+    fee: 500,
+    quote: 'Every child deserves compassionate care. I treat my young patients as if they were my own family.',
+    tags: ['Newborn Care', 'Vaccination', 'Nutrition'],
+    availability: { status: 'today', time: '4:30 PM' }
   },
   {
     id: 3,
     name: 'Dr. Rajesh Kumar',
-    specialty: 'Orthopedic Surgeon',
+    initials: 'RK',
+    image: 'https://images.unsplash.com/photo-1678940805950-73f2127f9d4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBkb2N0b3IlMjBzbWlsaW5nfGVufDF8fHx8MTc3NjMyNzk5OHww&ixlib=rb-4.1.0&q=80&w=1080',
+    specialty: 'Orthopedics',
     experience: 20,
     rating: 4.7,
-    reviews: 189,
-    image: 'https://images.unsplash.com/photo-1678940805950-73f2127f9d4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBkb2N0b3IlMjBzbWlsaW5nfGVufDF8fHx8MTc3NjMyNzk5OHww&ixlib=rb-4.1.0&q=80&w=1080',
-    verified: true,
+    reviews: 1890,
+    fee: 600,
+    quote: 'Restoring mobility is about restoring freedom. Let’s get you back to the activities you love most.',
+    tags: ['Joint Pain', 'Sports Injury', 'Fractures'],
+    availability: { status: 'tomorrow', time: '10:00 AM' }
   },
   {
     id: 4,
     name: 'Dr. Sneha Reddy',
-    specialty: 'Dermatologist',
+    initials: 'SR',
+    image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwYXRpZW50JTIwY29uc3VsdGF0aW9ufGVufDF8fHx8MTc3NjMxMDkwNHww&ixlib=rb-4.1.0&q=80&w=1080',
+    specialty: 'Dermatology',
     experience: 10,
     rating: 4.9,
-    reviews: 267,
-    image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwYXRpZW50JTIwY29uc3VsdGF0aW9ufGVufDF8fHx8MTc3NjMxMDkwNHww&ixlib=rb-4.1.0&q=80&w=1080',
-    verified: true,
-  },
+    reviews: 2670,
+    fee: 700,
+    quote: 'Healthy skin is a reflection of overall wellness. I provide personalized care for your skin’s unique needs.',
+    tags: ['Acne', 'Eczema', 'Laser Therapy'],
+    availability: { status: 'today', time: '5:15 PM' }
+  }
 ];
 
 const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-    },
-  },
+    transition: { staggerChildren: 0.1 }
+  }
 };
 
 const item = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0 },
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
 };
 
 export function TopDoctors() {
   return (
-    <section className="py-20 px-4 bg-white">
+    <section className="py-12 px-4 bg-transparent">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-end mb-10">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-              Top Rated <span className="text-blue-600">Doctors</span>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+          <div className="max-w-xl">
+            <h2 className="text-2xl md:text-3xl font-medium text-foreground mb-3">
+              Find the right care for you
             </h2>
-            <p className="text-gray-500">Book appointments with our most recommended specialists</p>
+            <p className="text-muted-foreground text-base font-normal leading-relaxed">
+              Connect with experienced specialists who prioritize your well-being.
+            </p>
           </div>
-          <Link
-            to="/find-doctors"
-            className="hidden md:flex items-center gap-1 text-blue-600 font-bold hover:underline"
-          >
-            View All <ChevronRight className="w-4 h-4" />
-          </Link>
         </div>
 
         <motion.div
@@ -87,60 +123,98 @@ export function TopDoctors() {
           viewport={{ once: true }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {topDoctors.map((doctor) => (
-            <motion.div key={doctor.id} variants={item}>
-              <Link
-                to={`/doctor/${doctor.id}`}
-                className="group block bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-                  <ImageWithFallback
-                    src={doctor.image}
-                    alt={doctor.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {doctor.verified && (
-                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm p-1 rounded-lg">
-                      <BadgeCheck className="w-5 h-5 text-blue-600" />
-                    </div>
-                  )}
-                  <div className="absolute bottom-3 right-3 bg-white px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
-                    <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-                    <span className="text-sm font-bold">{doctor.rating}</span>
-                  </div>
-                </div>
+          {topDoctors.map((doctor) => {
+            const style = specialtyStyles[doctor.specialty as keyof typeof specialtyStyles];
+            const Icon = style.icon;
 
-                <div className="p-5">
-                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{doctor.name}</h3>
-                  <p className="text-blue-600 font-medium text-sm mb-3">{doctor.specialty}</p>
-
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                    <div className="text-xs text-gray-500">
-                      <p className="font-bold text-gray-700">{doctor.experience} Years</p>
-                      <p>Experience</p>
+            return (
+              <motion.div key={doctor.id} variants={item} className="h-full flex flex-col">
+                <div 
+                  className="bg-white rounded-[16px] p-5 flex flex-col h-full border-[0.5px] border-gray-200 hover:border-gray-400 transition-all duration-300 group"
+                  style={{ '--accent-color': style.color } as any}
+                >
+                  {/* Top Row: Avatar Photo + Availability */}
+                  <div className="flex justify-between items-center mb-4">
+                    <div 
+                      className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow-sm"
+                      style={{ backgroundColor: style.bg, color: style.color }}
+                    >
+                      {doctor.image ? (
+                        <img src={doctor.image} alt={doctor.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-base font-medium">{doctor.initials}</span>
+                      )}
                     </div>
-                    <div className="text-xs text-gray-500 text-right">
-                      <p className="font-bold text-gray-700">{doctor.reviews}</p>
-                      <p>Reviews</p>
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-[16px] bg-gray-50 border border-gray-100">
+                      <div className={`w-1.5 h-1.5 rounded-full ${doctor.availability.status === 'today' ? 'bg-green-500' : 'bg-amber-500'}`} />
+                      <span className="text-[10px] font-medium text-gray-600">
+                        {doctor.availability.status === 'today' ? `Today ${doctor.availability.time}` : 'Tomorrow'}
+                      </span>
                     </div>
                   </div>
-                  
-                  <button className="w-full mt-4 bg-blue-600 text-white py-2 rounded-xl font-bold hover:bg-blue-700 transition-colors">
-                    Book Appointment
-                  </button>
+
+                  {/* Doctor Info */}
+                  <div className="mb-3">
+                    <h3 className="text-base font-medium text-gray-900 mb-0.5">{doctor.name}</h3>
+                    <div className="flex items-center gap-2 text-gray-500">
+                      <Icon className="w-3.5 h-3.5" style={{ color: style.color }} />
+                      <span className="text-xs">{doctor.specialty} · {doctor.experience} Yrs</span>
+                    </div>
+                  </div>
+
+                  {/* Quote Block */}
+                  <div 
+                    className="mb-4 pl-3 border-l-2 py-0.5"
+                    style={{ borderLeftColor: style.color }}
+                  >
+                    <p className="text-xs italic font-normal text-gray-600 leading-relaxed">
+                      "{doctor.quote}"
+                    </p>
+                  </div>
+
+                  {/* Specialty Tags */}
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {doctor.tags.map((tag) => (
+                      <span 
+                        key={tag}
+                        className="px-2 py-0.5 rounded-[16px] text-[9px] font-medium border border-gray-200 text-gray-500"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Spacer for Flexbox Alignment */}
+                  <div className="flex-1" />
+
+                  {/* Rating */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-0.5">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      <span className="text-xs font-medium text-gray-900">{doctor.rating}</span>
+                    </div>
+                    <span className="text-[10px] text-gray-400">({doctor.reviews} patients)</span>
+                  </div>
+
+                  {/* Bottom Row: CTA + Save */}
+                  <div className="flex gap-2">
+                    <button 
+                      className="flex-1 text-white text-xs font-medium h-[38px] rounded-[10px] transition-all active:scale-[0.98]"
+                      style={{ backgroundColor: style.color }}
+                    >
+                      Book · ₹{doctor.fee}
+                    </button>
+                    <button className="w-[38px] h-[38px] rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-300 transition-all">
+                      <Bookmark className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-              </Link>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </motion.div>
-        
-        <Link
-          to="/find-doctors"
-          className="md:hidden flex items-center justify-center gap-1 text-blue-600 font-bold mt-8 border border-blue-600 py-3 rounded-xl"
-        >
-          View All Doctors
-        </Link>
       </div>
     </section>
   );
 }
+
