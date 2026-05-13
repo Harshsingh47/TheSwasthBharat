@@ -67,7 +67,7 @@ export function Reviews() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-            User <span className="text-blue-600">Reviews</span>
+            What Our <span className="text-transparent bg-clip-text bg-brand-grad">Users Say</span>
           </h2>
           <p className="text-gray-500">What our users say about their experience with Swasth Bharat</p>
         </div>

@@ -43,7 +43,7 @@ export function SocialImpact() {
   };
 
   return (
-    <section className="py-12 px-4 bg-transparent relative overflow-hidden">
+    <section className="py-10 px-4 bg-transparent relative overflow-hidden">
        {/* Background Decoration */}
        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-5 pointer-events-none">
         <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl animate-pulse-glow" />
@@ -51,11 +51,11 @@ export function SocialImpact() {
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Our <span className="text-transparent bg-clip-text bg-brand-grad">Social Impact</span>
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4">
+            Our Social <span className="text-transparent bg-clip-text bg-brand-grad">Impact</span>
           </h2>
-          <p className="text-muted-foreground text-lg font-medium max-w-2xl mx-auto">Join us in making healthcare accessible to every corner of India through community-driven initiatives.</p>
+          <p className="text-muted-foreground text-base font-medium max-w-2xl mx-auto">Join us in making healthcare accessible to every corner of India through community-driven initiatives.</p>
         </div>
 
         <motion.div
@@ -63,7 +63,7 @@ export function SocialImpact() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-12"
+          className="grid grid-cols-1 md:grid-cols-2 gap-8"
         >
           {socialImpact.map((campaign) => {
             const percentage = (campaign.raised / campaign.goal) * 100;
@@ -74,7 +74,7 @@ export function SocialImpact() {
                 variants={item}
                 className="card-premium h-full group border-primary/5"
               >
-                <div className="relative h-72 overflow-hidden bg-gray-100">
+                <div className="relative h-56 overflow-hidden bg-gray-100">
                   <ImageWithFallback
                     src={campaign.image}
                     alt={campaign.title}
@@ -87,15 +87,15 @@ export function SocialImpact() {
                   </div>
                 </div>
 
-                <div className="p-10">
-                  <h3 className="text-2xl font-bold text-foreground mb-4 font-montserrat">
+                <div className="p-8">
+                  <h3 className="text-xl font-bold text-foreground mb-4 font-montserrat">
                     {campaign.title}
                   </h3>
-                  <p className="text-muted-foreground mb-8 leading-relaxed font-medium">
+                  <p className="text-muted-foreground mb-6 leading-relaxed font-medium">
                     {campaign.description}
                   </p>
 
-                  <div className="mb-8">
+                  <div className="mb-6">
                     <div className="flex justify-between items-end mb-3">
                       <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Campaign Progress</p>
                       <p className="text-sm font-bold text-primary">{formatCurrency(campaign.raised)} <span className="text-muted-foreground font-medium">/ {formatCurrency(campaign.goal)}</span></p>
@@ -114,7 +114,7 @@ export function SocialImpact() {
 
                   <Link
                     to="/donations"
-                    className="flex items-center justify-center gap-3 w-full bg-cta-grad text-white px-8 py-4 rounded-2xl font-bold hover:shadow-[0_0_20px_rgba(249,115,6,0.4)] transition-all active:scale-[0.98]"
+                    className="flex items-center justify-center gap-3 w-full bg-cta-grad text-white px-8 py-3 rounded-2xl font-bold hover:shadow-[0_0_20px_rgba(249,115,6,0.4)] transition-all active:scale-[0.98]"
                   >
                     <Heart className="w-5 h-5 fill-white" />
                     <span>Support This Initiative</span>

@@ -43,13 +43,13 @@ const item = {
 
 export function SuccessStories() {
   return (
-    <section className="py-12 px-4 bg-transparent relative overflow-hidden">
+    <section className="py-10 px-4 bg-transparent relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4">
             Patient <span className="text-transparent bg-clip-text bg-brand-grad">Success Stories</span>
           </h2>
-          <p className="text-muted-foreground text-lg font-medium max-w-2xl mx-auto">Real experiences from people who found healing through our technology-driven community.</p>
+          <p className="text-muted-foreground text-base font-medium max-w-2xl mx-auto">Real experiences from people who found healing through our technology-driven community.</p>
         </div>
 
         <motion.div
@@ -57,7 +57,7 @@ export function SuccessStories() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-10"
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
         >
           {successStories.map((story) => (
             <motion.div
@@ -65,9 +65,9 @@ export function SuccessStories() {
               variants={item}
               className="card-premium group border-primary/5 h-full"
             >
-              <div className="p-10 flex flex-col h-full">
-                <div className="flex items-center gap-5 mb-8">
-                  <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-primary/20 p-1 bg-white">
+              <div className="p-7 flex flex-col h-full">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-primary/20 p-1 bg-white">
                     <img
                       src={story.image}
                       alt={story.name}
@@ -75,19 +75,19 @@ export function SuccessStories() {
                     />
                   </div>
                   <div>
-                    <p className="font-bold text-foreground text-lg font-montserrat">{story.name}</p>
+                    <p className="font-bold text-foreground text-base font-montserrat">{story.name}</p>
                     <p className="text-sm font-bold text-secondary uppercase tracking-wider">{story.location}</p>
                   </div>
                 </div>
 
                 <div className="relative mt-auto">
                   <Quote className="absolute -top-6 -left-6 w-12 h-12 text-primary/5 group-hover:text-primary/10 transition-colors" />
-                  <p className="text-muted-foreground italic leading-relaxed text-lg relative z-10 font-medium">
+                  <p className="text-muted-foreground italic leading-relaxed text-base relative z-10 font-medium">
                     "{story.story}"
                   </p>
                 </div>
                 
-                <div className="mt-8 flex gap-1">
+                <div className="mt-6 flex gap-1">
                   {[...Array(5)].map((_, i) => (
                     <div key={i} className="w-2 h-2 rounded-full bg-cta" />
                   ))}

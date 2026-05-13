@@ -103,12 +103,12 @@ const item = {
 
 export function TopDoctors() {
   return (
-    <section className="py-12 px-4 bg-transparent">
+    <section className="py-10 px-4 bg-transparent">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
           <div className="max-w-xl">
-            <h2 className="text-2xl md:text-3xl font-medium text-foreground mb-3">
-              Find the right care for you
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              Discover Top <span className="text-transparent bg-clip-text bg-brand-grad">Doctors</span>
             </h2>
             <p className="text-muted-foreground text-base font-normal leading-relaxed">
               Connect with experienced specialists who prioritize your well-being.
@@ -130,7 +130,7 @@ export function TopDoctors() {
             return (
               <motion.div key={doctor.id} variants={item} className="h-full flex flex-col">
                 <div 
-                  className="bg-white rounded-[16px] p-5 flex flex-col h-full border-[0.5px] border-gray-200 hover:border-gray-400 transition-all duration-300 group"
+                  className="bg-white rounded-[16px] p-4 flex flex-col h-full border-[0.5px] border-gray-200 hover:border-gray-400 transition-all duration-300 group"
                   style={{ '--accent-color': style.color } as any}
                 >
                   {/* Top Row: Avatar Photo + Availability */}

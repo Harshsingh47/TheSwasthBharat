@@ -30,9 +30,9 @@ const item = {
 
 export function Specialties() {
   return (
-    <section className="py-24 px-4 mt-20">
+    <section className="py-10 px-4 bg-transparent">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -42,10 +42,10 @@ export function Specialties() {
             <span className="inline-block px-4 py-1.5 bg-secondary/10 rounded-full text-secondary text-sm tracking-wide mb-4">
               MEDICAL SPECIALTIES
             </span>
-            <h2 className="text-4xl md:text-5xl mb-4 text-gray-900">
-              Find Experts in Every Field
+            <h2 className="text-2xl md:text-4xl mb-4 text-gray-900 font-bold">
+              Our Health <span className="text-transparent bg-clip-text bg-brand-grad">Specialties</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base text-gray-600 max-w-2xl mx-auto">
               Browse through our network of verified specialists and book appointments instantly
             </p>
           </motion.div>
@@ -64,10 +64,10 @@ export function Specialties() {
               <motion.div key={index} variants={item}>
                 <Link
                   to="/find-doctors"
-                  className="group block bg-white p-8 rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-transparent"
+                  className="group block bg-white p-6 rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-transparent"
                 >
-                  <div className={`w-20 h-20 bg-gradient-to-br ${specialty.color} rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg`}>
-                    <Icon className="w-10 h-10 text-white" strokeWidth={1.5} />
+                  <div className={`w-16 h-16 bg-gradient-to-br ${specialty.color} rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg`}>
+                    <Icon className="w-8 h-8 text-white" strokeWidth={1.5} />
                   </div>
                   <h3 className="text-center mb-2 text-gray-900">
                     {specialty.name}

@@ -47,12 +47,12 @@ const item = {
 
 export function BlogPreview() {
   return (
-    <section className="py-12 px-4 bg-transparent">
+    <section className="py-10 px-4 bg-transparent">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-end mb-12">
+        <div className="flex justify-between items-end mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-              Health & Wellness <span className="text-blue-600">Blog</span>
+              Latest Health <span className="text-transparent bg-clip-text bg-brand-grad">Insights</span>
             </h2>
             <p className="text-gray-500">Expert health insights and wellness tips for a better life</p>
           </div>
