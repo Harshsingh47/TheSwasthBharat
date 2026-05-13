@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { Search, MapPin, ChevronRight, Mic, Hospital, Stethoscope, Pill, Microscope, Home, Leaf, Dumbbell, Eye, Brain, Truck, Dog, HeartPulse, Activity, UserRound, PhoneCall, Grid, Calendar, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Search, MapPin, ChevronRight, Mic, Hospital, Stethoscope, Pill, Microscope, Home, Leaf, Dumbbell, Eye, Brain, Truck, Dog, HeartPulse, Activity, UserRound, PhoneCall, Grid, Calendar, X, Shield, Clock, Star } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 
 const heroSlides = [
   {
@@ -47,6 +47,10 @@ export function HeroSection() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const videoId = "dK4EV9wJPm0";
 
+  const { scrollY } = useScroll();
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const heroY = useTransform(scrollY, [0, 400], [0, -100]);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
@@ -61,54 +65,135 @@ export function HeroSection() {
       <div className="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] bg-accent/20 rounded-full blur-[100px] animate-pulse-glow" style={{ animationDelay: '2s' }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Heading Section */}
-        <div className="max-w-2xl mb-8">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-5xl font-bold mb-3 text-foreground leading-[1.1]"
-          >
-            Your Gateway to <span className="text-transparent bg-clip-text bg-brand-grad animate-gradient-x">Smart Health</span>
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-base md:text-lg text-muted-foreground font-medium"
-          >
-            Connecting communities with technology-driven healthcare solutions.
-          </motion.p>
-        </div>
+        {/* Scroll-Responsive Content Wrapper */}
+        <motion.div style={{ opacity: heroOpacity, y: heroY }}>
+          {/* Top Row: Heading + Trust Widget */}
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-12 mb-10">
+            {/* Left: Heading Section */}
+            <div className="max-w-2xl">
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-4xl md:text-6xl font-extrabold mb-4 text-gray-900 leading-[1.1] tracking-tight"
+              >
+                Your Gateway to <span className="text-transparent bg-clip-text bg-brand-grad animate-gradient-x">Smart Health</span>
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-lg md:text-xl text-gray-600 font-medium max-w-xl"
+              >
+                Connecting communities with technology-driven healthcare solutions across India.
+              </motion.p>
+            </div>
 
-        {/* Premium Search Bar */}
-        <div className="flex flex-col md:flex-row gap-0 mb-12 glass rounded-2xl overflow-hidden p-1.5 shadow-xl border-white/50">
-          <div className="flex-[0.3] flex items-center px-5 py-3 group">
-            <MapPin className="text-primary w-4 h-4 mr-2" />
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="w-full focus:outline-none text-foreground font-semibold bg-transparent text-sm"
-              placeholder="Your Location"
-            />
+            {/* Right: Trust & Review Widget (Desktop Only) */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="hidden lg:flex"
+            >
+              <motion.div 
+                whileHover={{ y: -8, scale: 1.03 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                className="bg-white/60 backdrop-blur-xl p-8 px-10 rounded-[3rem] border border-white/50 shadow-[0_30px_70px_rgba(0,0,0,0.07)] hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] transition-shadow duration-500 group cursor-default relative overflow-hidden flex items-center gap-10"
+              >
+                {/* Interactive Glow Background */}
+                <motion.div 
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    opacity: [0.05, 0.1, 0.05] 
+                  }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  whileHover={{ scale: 1.5, opacity: 0.2 }}
+                  className="absolute top-0 right-0 w-40 h-40 bg-brand-grad rounded-full -mr-20 -mt-20 blur-3xl" 
+                />
+                
+                {/* Google Part */}
+                <div className="flex items-center gap-5 pr-10 border-r border-gray-100/80 relative z-10">
+                  <motion.div 
+                    whileHover={{ rotate: 12, scale: 1.1 }}
+                    className="w-14 h-14 bg-white rounded-[1.25rem] flex items-center justify-center shadow-lg border border-gray-50 transition-transform duration-500"
+                  >
+                    <img src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png" alt="Google" className="w-8 h-8" />
+                  </motion.div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-3xl font-black text-gray-900 tracking-tight">4.9</span>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <motion.div
+                            key={s}
+                            whileHover={{ scale: 1.5, rotate: 15 }}
+                            transition={{ type: "spring", stiffness: 500 }}
+                          >
+                            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-xs text-primary font-black uppercase tracking-[0.2em] opacity-80">2,480+ Google Reviews</p>
+                  </div>
+                </div>
+                
+                {/* Trust Badges Part */}
+                <div className="flex flex-col gap-4 relative z-10">
+                  {[
+                    { icon: Shield, text: 'ISO 9001:2015 Certified', color: 'text-primary', bgColor: 'bg-primary/10' },
+                    { icon: Clock, text: '24/7 Priority Support', color: 'text-secondary', bgColor: 'bg-secondary/10' },
+                    { icon: Activity, text: '100% Secure Data', color: 'text-amber-600', bgColor: 'bg-amber-50' }
+                  ].map((item, i) => (
+                    <motion.div 
+                      key={i}
+                      whileHover={{ x: 5 }}
+                      className={`flex items-center gap-3.5 text-[13px] font-bold text-gray-700 hover:${item.color} transition-colors group/item`}
+                    >
+                      <motion.div 
+                        whileHover={{ scale: 1.2, rotate: -10 }}
+                        className={`w-7 h-7 ${item.bgColor} rounded-xl flex items-center justify-center transition-transform`}
+                      >
+                        <item.icon className={`w-4 h-4 ${item.color}`} />
+                      </motion.div>
+                      <span className="whitespace-nowrap">{item.text}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
           </div>
-          <div className="hidden md:block w-px h-8 bg-gray-200 self-center" />
-          <div className="flex-1 flex items-center px-5 py-3 group">
-            <Search className="text-gray-400 w-4 h-4 mr-2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full focus:outline-none text-foreground bg-transparent text-sm"
-              placeholder="Search for Doctors, Hospitals, Lab Tests..."
-            />
-            <Mic className="text-primary w-4 h-4 mx-2 cursor-pointer hover:scale-110 transition-transform" />
+
+          {/* Premium Search Bar */}
+          <div className="flex flex-col md:flex-row gap-0 mb-12 glass rounded-2xl overflow-hidden p-1.5 shadow-xl border-white/50">
+            <div className="flex-[0.3] flex items-center px-5 py-3 group">
+              <MapPin className="text-primary w-4 h-4 mr-2" />
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="w-full focus:outline-none text-foreground font-semibold bg-transparent text-sm"
+                placeholder="Your Location"
+              />
+            </div>
+            <div className="hidden md:block w-px h-8 bg-gray-200 self-center" />
+            <div className="flex-1 flex items-center px-5 py-3 group">
+              <Search className="text-gray-400 w-4 h-4 mr-2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full focus:outline-none text-foreground bg-transparent text-sm"
+                placeholder="Search for Doctors, Hospitals, Lab Tests..."
+              />
+              <Mic className="text-primary w-4 h-4 mx-2 cursor-pointer hover:scale-110 transition-transform" />
+            </div>
+            <button className="bg-cta-grad hover:shadow-lg text-white px-7 py-3 rounded-xl font-bold transition-all flex items-center gap-2 group text-sm">
+              <span>Search Now</span>
+              <Search className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
-          <button className="bg-cta-grad hover:shadow-lg text-white px-7 py-3 rounded-xl font-bold transition-all flex items-center gap-2 group text-sm">
-            <span>Search Now</span>
-            <Search className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
+        </motion.div>
 
         {/* Main Banner Slider */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-16">

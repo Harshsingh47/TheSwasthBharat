@@ -1,15 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { Menu, X, ChevronDown, User, Calendar, Heart, LogOut, Bell, MessageSquare, Briefcase, TrendingUp, Megaphone, PlusCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import logo from '../brand/logo the swasth bharat (1).png';
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem('token'));
   const [userData, setUserData] = useState<any>(null);
 
@@ -55,9 +65,17 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 glass border-b border-white/20 font-sans">
-      {/* Top Bar */}
-      <div className="hidden md:block bg-gray-50 border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+      {/* Top Bar - Hides on Scroll */}
+      <AnimatePresence>
+        {!isScrolled && (
+          <motion.div 
+            initial={{ height: 'auto', opacity: 1 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="hidden md:block bg-gray-50 border-b border-gray-100 overflow-hidden"
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
           <div className="flex justify-end items-center space-x-6 text-sm text-gray-600">
             <div className="flex items-center space-x-1 cursor-pointer hover:text-primary transition-colors">
               <span>EN</span>
@@ -90,7 +108,9 @@ export function Navbar() {
             </Link>
           </div>
         </div>
-      </div>
+      </motion.div>
+    )}
+  </AnimatePresence>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">

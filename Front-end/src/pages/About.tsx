@@ -1,230 +1,278 @@
-import { Heart, Users, Award, Target, ArrowRight } from 'lucide-react';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { Heart, Users, Target, CheckCircle2, ShieldCheck, Globe, Users2, Megaphone, Droplets, GraduationCap, HandHelping, Rocket } from 'lucide-react';
+import { motion } from 'motion/react';
 
 export default function About() {
-  const offerings = [
-    {
-      icon: Heart,
-      title: 'Quality Healthcare',
-      description: 'Access to verified and experienced healthcare professionals',
-    },
-    {
-      icon: Users,
-      title: 'Patient-Centric',
-      description: 'Personalized care tailored to your unique health needs',
-    },
-    {
-      icon: Award,
-      title: 'Trusted Platform',
-      description: 'Secure and reliable healthcare service delivery',
-    },
+  const whatWeDo = [
     {
       icon: Target,
-      title: 'Accessible Care',
-      description: 'Healthcare services available across all of India',
+      title: 'Trusted Discovery',
+      description: 'Help users discover trusted doctors, hospitals, clinics, labs, and healthcare providers.',
+    },
+    {
+      icon: Rocket,
+      title: 'Digital Promotion',
+      description: 'Promote local healthcare services and medical businesses digitally to reach more people.',
+    },
+    {
+      icon: Megaphone,
+      title: 'Health Awareness',
+      description: 'Share campaigns, medical updates, interviews, podcasts, and wellness content.',
+    },
+    {
+      icon: ShieldCheck,
+      title: 'Professional Support',
+      description: 'Support healthcare professionals with digital presence and patient engagement solutions.',
+    },
+    {
+      icon: GraduationCap,
+      title: 'Preventive Education',
+      description: 'Encourage preventive healthcare through community education and awareness initiatives.',
     },
   ];
 
-  const approach = [
+  const socialMission = [
     {
-      step: '01',
-      title: 'Search & Discover',
-      description: 'Find the right doctor based on specialty, location, and ratings',
+      icon: Megaphone,
+      title: 'Awareness Campaigns',
+      description: 'Organizing and supporting social healthcare awareness campaigns.',
     },
     {
-      step: '02',
-      title: 'Book Appointment',
-      description: 'Schedule your consultation at your convenience',
+      icon: Users2,
+      title: 'Community Welfare',
+      description: 'Connecting volunteers for community welfare and healthcare support activities.',
     },
     {
-      step: '03',
-      title: 'Get Care',
-      description: 'Receive quality healthcare from verified professionals',
+      icon: Droplets,
+      title: 'Donation Drives',
+      description: 'Promoting blood donation drives, health camps, and wellness initiatives.',
     },
     {
-      step: '04',
-      title: 'Follow-up',
-      description: 'Continuous care and support for your health journey',
+      icon: HandHelping,
+      title: 'Emergency Assistance',
+      description: 'Supporting local communities with healthcare information and emergency awareness.',
+    },
+    {
+      icon: GraduationCap,
+      title: 'Youth Engagement',
+      description: 'Encouraging youth participation in social work and healthcare volunteering.',
     },
   ];
 
-  const testimonials = [
-    {
-      name: 'Dr. Priya Patel',
-      role: 'Pediatrician',
-      text: 'Swasth Bharat has helped me reach more patients and provide better care. The platform is easy to use and truly patient-focused.',
-      image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwYXRpZW50JTIwY29uc3VsdGF0aW9ufGVufDF8fHx8MTc3NjMxMDkwNHww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      name: 'Dr. Rajesh Kumar',
-      role: 'Orthopedic Surgeon',
-      text: 'This platform has transformed how I connect with patients. It\'s efficient, professional, and makes healthcare more accessible.',
-      image: 'https://images.unsplash.com/photo-1678940805950-73f2127f9d4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBkb2N0b3IlMjBzbWlsaW5nfGVufDF8fHx8MTc3NjMyNzk5OHww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      name: 'Dr. Sneha Reddy',
-      role: 'Dermatologist',
-      text: 'I love how Swasth Bharat empowers both doctors and patients. It\'s making healthcare more transparent and accessible.',
-      image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwYXRpZW50JTIwY29uc3VsdGF0aW9ufGVufDF8fHx8MTc3NjMxMDkwNHww&ixlib=rb-4.1.0&q=80&w=1080',
-    },
+  const whyChooseUs = [
+    'Trusted healthcare platform',
+    'Community-focused approach',
+    'Digital support for healthcare providers',
+    'Health awareness & social initiatives',
+    'Local healthcare service promotion',
+    'Dedicated volunteer and social support network',
   ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
 
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 via-blue-100 to-green-50 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Know About Us
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto">
-            Connecting India to Quality Healthcare
+    <div className="bg-background">
+      {/* Premium Hero Section */}
+      <section className="relative py-24 overflow-hidden bg-surface">
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-grad opacity-5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 left-0 w-1/3 h-full bg-cta-grad opacity-5 blur-[120px] rounded-full" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <motion.span 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-block px-4 py-1.5 bg-primary/10 rounded-xl text-primary text-sm font-bold tracking-wide mb-6 uppercase"
+          >
+            About Us
+          </motion.span>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-7xl font-bold text-foreground mb-8 leading-[1.1]"
+          >
+            The <span className="text-transparent bg-clip-text bg-brand-grad">Swasth Bharat</span>
+          </motion.h1>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="max-w-3xl mx-auto"
+          >
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed font-medium">
+              We are committed to making healthcare more accessible, transparent, and community-driven. 
+              Our mission is to connect people with trusted doctors, hospitals, clinics, diagnostic centers, 
+              pharmacies, and healthcare services across India — all through one reliable platform.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Philosophy Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="p-10 rounded-3xl bg-white border border-gray-100 shadow-2xl relative overflow-hidden"
+          >
+            <div className="absolute top-0 left-0 w-2 h-full bg-brand-grad" />
+            <p className="text-xl md:text-2xl text-gray-800 leading-relaxed font-medium italic">
+              "We believe healthcare is not just about treatment, but about awareness, support, and social responsibility. 
+              That’s why The Swasth Bharat works beyond a healthcare directory to create a healthier and more informed society."
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* What We Do */}
+      <section className="py-20 px-4 bg-gray-50/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+              What <span className="text-transparent bg-clip-text bg-brand-grad">We Do</span>
+            </h2>
+            <div className="w-20 h-1.5 bg-brand-grad mx-auto rounded-full" />
+          </div>
+
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {whatWeDo.map((item, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all border border-gray-100 group hover:-translate-y-2 duration-300"
+              >
+                <div className="w-14 h-14 bg-primary/5 rounded-xl flex items-center justify-center mb-6 group-hover:bg-brand-grad transition-colors duration-300">
+                  <item.icon className="w-7 h-7 text-primary group-hover:text-white transition-colors duration-300" />
+                </div>
+                <h3 className="text-xl font-bold mb-4 text-gray-900">{item.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{item.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Our Social Mission */}
+      <section className="py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row gap-12 items-center">
+            <div className="lg:w-[55%]">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Our <span className="text-transparent bg-clip-text bg-cta-grad">Social Mission</span>
+              </h2>
+              <p className="text-base text-muted-foreground mb-8 leading-relaxed">
+                Our commitment goes beyond digital connections. We are actively involved in building a stronger, 
+                healthier community through direct social initiatives and volunteer engagement.
+              </p>
+              
+              <div className="space-y-3">
+                {socialMission.map((item, index) => (
+                  <motion.div 
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="flex gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-cta/10 rounded-xl flex items-center justify-center">
+                      <item.icon className="w-5 h-5 text-cta" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900 mb-0.5">{item.title}</h4>
+                      <p className="text-sm text-gray-600 leading-snug">{item.description}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            <div className="lg:w-[45%] relative flex justify-center lg:justify-end">
+              <div className="absolute -inset-6 bg-cta-grad opacity-10 blur-3xl rounded-full" />
+              <img 
+                src="/image3.png" 
+                alt="Social Mission" 
+                className="relative rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] z-10 h-[550px] w-auto object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Vision Section */}
+      <section className="py-24 bg-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-brand-grad opacity-10" />
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+          <h2 className="text-2xl md:text-4xl font-bold text-white mb-8">Our Vision</h2>
+          <p className="text-xl md:text-3xl text-gray-300 leading-relaxed font-light italic">
+            "To build a strong digital healthcare ecosystem where every individual can easily access trusted medical information and healthcare services while creating a socially responsible and healthier India."
           </p>
         </div>
       </section>
 
-      {/* Mission Statement */}
-      <section className="py-16 px-4">
+      {/* Why Choose Us */}
+      <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Mission</h2>
-            <p className="text-lg text-gray-700 leading-relaxed mb-8">
-              At The Swasth Bharat, we are committed to making quality healthcare accessible to every corner of India. 
-              We connect patients with verified, experienced healthcare professionals, ensuring that everyone has access 
-              to the care they deserve. Our platform bridges the gap between patients and doctors, making healthcare 
-              simple, transparent, and trustworthy.
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
-              <div className="text-center">
-                <p className="text-4xl font-bold text-primary mb-2">10,000+</p>
-                <p className="text-gray-600">Verified Doctors</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-bold text-primary mb-2">50,000+</p>
-                <p className="text-gray-600">Happy Patients</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-bold text-primary mb-2">100+</p>
-                <p className="text-gray-600">Cities Covered</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-bold text-primary mb-2">25+</p>
-                <p className="text-gray-600">Specialties</p>
-              </div>
-            </div>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Why Choose Us?</h2>
+            <div className="w-20 h-1.5 bg-cta-grad mx-auto rounded-full" />
           </div>
-        </div>
-      </section>
 
-      {/* Our Offerings */}
-      <section className="py-16 px-4 bg-[#FAF8F3]">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            Our Offerings
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {offerings.map((offering, index) => {
-              const Icon = offering.icon;
-              return (
-                <div
-                  key={index}
-                  className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all text-center"
-                >
-                  <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">{offering.title}</h3>
-                  <p className="text-gray-600">{offering.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Our Approach */}
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            Our Approach
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {approach.map((step, index) => (
-              <div key={index} className="relative">
-                <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all h-full">
-                  <div className="text-6xl font-bold text-primary/10 mb-4">{step.step}</div>
-                  <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-                  <p className="text-gray-600">{step.description}</p>
-                </div>
-                {index < approach.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2">
-                    <ArrowRight className="w-6 h-6 text-primary" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Doctor Testimonials */}
-      <section className="py-16 px-4 bg-[#F5F5DC]">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            Doctor Testimonials
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {whyChooseUs.map((reason, index) => (
+              <motion.div
                 key={index}
-                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                viewport={{ once: true }}
+                className="flex items-center gap-4 p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="h-48 overflow-hidden">
-                  <ImageWithFallback
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-6 h-6 text-success" />
                 </div>
-                <div className="p-6">
-                  <p className="text-gray-700 mb-4 italic">"{testimonial.text}"</p>
-                  <div>
-                    <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
-                  </div>
-                </div>
-              </div>
+                <span className="font-bold text-gray-800">{reason}</span>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CEO Message */}
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="h-96 md:h-auto">
-                <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1763770446480-d6b3f311b5aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwdGVhbSUyMGRpdmVyc2V8ZW58MXx8fHwxNzc2MzU0NTE0fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                  alt="CEO"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-8 md:p-12 flex flex-col justify-center">
-                <h2 className="text-3xl font-bold mb-6">Message from Our CEO</h2>
-                <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                  "Our vision is to create a healthier India where quality healthcare is not a privilege, but a right. 
-                  Through technology and compassion, we're building a platform that brings doctors and patients together, 
-                  making healthcare accessible, affordable, and trustworthy for all."
-                </p>
-                <div>
-                  <p className="font-semibold text-lg">Dr. Arjun Mehta</p>
-                  <p className="text-gray-600">Founder & CEO, The Swasth Bharat</p>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Final Tagline */}
+      <section className="py-20 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-block"
+          >
+            <h3 className="text-2xl md:text-4xl font-bold text-foreground mb-4">
+              The Swasth Bharat
+            </h3>
+            <p className="text-xl md:text-2xl text-transparent bg-clip-text bg-brand-grad font-bold italic">
+              Connecting Healthcare with Humanity.
+            </p>
+          </motion.div>
         </div>
       </section>
     </div>

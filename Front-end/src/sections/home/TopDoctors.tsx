@@ -128,9 +128,15 @@ export function TopDoctors() {
             const Icon = style.icon;
 
             return (
-              <motion.div key={doctor.id} variants={item} className="h-full flex flex-col">
+              <motion.div 
+                key={doctor.id} 
+                variants={item} 
+                className="h-full flex flex-col cursor-pointer"
+                whileHover={{ y: -5, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              >
                 <div 
-                  className="bg-white rounded-[16px] p-4 flex flex-col h-full border-[0.5px] border-gray-200 hover:border-gray-400 transition-all duration-300 group"
+                  className="bg-white rounded-[16px] p-4 flex flex-col h-full border-[0.5px] border-gray-200 hover:border-gray-400 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 group"
                   style={{ '--accent-color': style.color } as any}
                 >
                   {/* Top Row: Avatar Photo + Availability */}
@@ -199,7 +205,7 @@ export function TopDoctors() {
                   {/* Bottom Row: CTA + Save */}
                   <div className="flex gap-2">
                     <button 
-                      className="flex-1 text-white text-xs font-medium h-[38px] rounded-[10px] transition-all active:scale-[0.98]"
+                      className="flex-1 text-white text-xs font-medium h-[38px] rounded-[10px] transition-all cursor-pointer hover:brightness-110 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
                       style={{ backgroundColor: style.color }}
                     >
                       Book · ₹{doctor.fee}
