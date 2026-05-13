@@ -9,6 +9,7 @@ export function Navbar() {
   const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAdvertiseModalOpen, setIsAdvertiseModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -64,7 +65,8 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 glass border-b border-white/20 font-sans">
+    <>
+      <nav className="sticky top-0 z-50 glass border-b border-white/20 font-sans">
       {/* Top Bar - Hides on Scroll */}
       <AnimatePresence>
         {!isScrolled && (
@@ -95,10 +97,13 @@ export function Navbar() {
               </div>
               Leads
             </Link>
-            <Link to="/advertise" className="hover:text-primary transition-colors flex items-center gap-1">
+            <button 
+              onClick={() => setIsAdvertiseModalOpen(true)}
+              className="hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
+            >
               <Megaphone className="w-4 h-4" />
               Advertise
-            </Link>
+            </button>
             <Link to="/business" className="flex items-center gap-1 group">
               <span className="bg-red-500 text-[10px] text-white px-1.5 py-0.5 rounded-sm font-bold leading-none">BUSINESS</span>
               <span className="hover:text-primary transition-colors flex items-center gap-1">
@@ -353,12 +358,117 @@ export function Navbar() {
             <div className="pt-6 border-t border-gray-100 grid grid-cols-2 gap-4 text-sm text-gray-500">
               <Link to="/careers" onClick={() => setIsMobileMenuOpen(false)}>We are Hiring</Link>
               <Link to="/investor-relations" onClick={() => setIsMobileMenuOpen(false)}>Investors</Link>
-              <Link to="/advertise" onClick={() => setIsMobileMenuOpen(false)}>Advertise</Link>
+              <button onClick={() => { setIsMobileMenuOpen(false); setIsAdvertiseModalOpen(true); }} className="text-left">Advertise</button>
               <Link to="/business" onClick={() => setIsMobileMenuOpen(false)}>Free Listing</Link>
             </div>
           </div>
         </div>
       )}
+
     </nav>
+      {/* Advertise Modal */}
+      <AnimatePresence>
+        {isAdvertiseModalOpen && (
+          <div className="fixed inset-0 z-[9999] flex justify-center items-start overflow-y-auto pt-20 pb-10 px-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsAdvertiseModalOpen(false)}
+              className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[9998]"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-4xl bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row z-[9999]"
+            >
+              {/* Left Side: Branding & Benefits */}
+              <div className="md:w-5/12 bg-brand-grad p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl" />
+                <div className="relative z-10">
+                  <div className="bg-white/20 backdrop-blur-md w-12 h-12 rounded-xl flex items-center justify-center mb-6">
+                    <Megaphone className="w-6 h-6" />
+                  </div>
+                  <h2 className="text-3xl font-bold mb-4 leading-tight">Grow Your Healthcare Business</h2>
+                  <p className="text-white/80 text-sm mb-8">
+                    Partner with India's most trusted healthcare ecosystem and reach millions of patients searching for quality care.
+                  </p>
+                  
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <TrendingUp className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm">10M+ Monthly Reach</h4>
+                        <p className="text-xs text-white/60">Targeted visibility across India.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <MessageSquare className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm">Direct Patient Leads</h4>
+                        <p className="text-xs text-white/60">High-intent inquiries for your services.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="relative z-10 pt-8 border-t border-white/10 mt-8">
+                  <p className="text-[10px] uppercase tracking-widest text-white/40 font-bold">Trusted by 5,000+ Providers</p>
+                </div>
+              </div>
+
+              {/* Right Side: Contact Form */}
+              <div className="md:w-7/12 p-8 md:p-12 bg-white relative">
+                <button 
+                  onClick={() => setIsAdvertiseModalOpen(false)}
+                  className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+                
+                <div className="mb-8">
+                  <h3 className="text-xl font-bold mb-2 text-transparent bg-clip-text bg-brand-grad inline-block">Get Started</h3>
+                  <p className="text-sm text-gray-500">Fill out the form and our team will contact you within 24 hours.</p>
+                </div>
+
+                <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Full Name</label>
+                      <input type="text" className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="John Doe" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Business Name</label>
+                      <input type="text" className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="City Hospital" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Email Address</label>
+                    <input type="email" className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="contact@business.com" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Phone Number</label>
+                    <input type="tel" className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="+91 98765 43210" />
+                  </div>
+                  <div className="space-y-1.5 pt-2">
+                    <button className="w-full bg-brand-grad text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-primary/30 transition-all cursor-pointer active:scale-[0.98]">
+                      Submit Application
+                    </button>
+                    <p className="text-center text-[10px] text-gray-400 mt-4 px-4">
+                      By submitting, you agree to our terms of service and privacy policy regarding business inquiries.
+                    </p>
+                  </div>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

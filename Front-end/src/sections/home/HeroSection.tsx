@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { Search, MapPin, ChevronRight, Mic, Hospital, Stethoscope, Pill, Microscope, Home, Leaf, Dumbbell, Eye, Brain, Truck, Dog, HeartPulse, Activity, UserRound, PhoneCall, Grid, Calendar, X, Shield, Clock, Star } from 'lucide-react';
+import { Search, MapPin, ChevronRight, Mic, Hospital, Stethoscope, Pill, Microscope, Home, Leaf, Dumbbell, Eye, Brain, Truck, HeartPulse, Activity, UserRound, PhoneCall, Grid, Calendar, X, Shield, Clock, Star, Smile } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 
 const heroSlides = [
@@ -32,10 +32,10 @@ const categories = [
   { icon: Eye, name: 'Eye Care', color: 'text-secondary', bgColor: 'bg-secondary/10', borderColor: 'border-secondary/20' },
   { icon: Brain, name: 'Mental Health', color: 'text-pink', bgColor: 'bg-pink/10', borderColor: 'border-pink/20' },
   { icon: Truck, name: 'Ambulance', color: 'text-red-500', bgColor: 'bg-red-50', borderColor: 'border-red-100' },
-  { icon: Dog, name: 'Veterinary', color: 'text-primary', bgColor: 'bg-primary/10', borderColor: 'border-primary/20' },
   { icon: HeartPulse, name: 'Cardiology', color: 'text-red-500', bgColor: 'bg-red-50', borderColor: 'border-red-100' },
   { icon: Activity, name: 'Physiotherapy', color: 'text-success', bgColor: 'bg-success/10', borderColor: 'border-success/20' },
   { icon: PhoneCall, name: 'Teleconsult', color: 'text-secondary', bgColor: 'bg-secondary/10', borderColor: 'border-secondary/20' },
+  { icon: Smile, name: 'Dental Care', color: 'text-primary', bgColor: 'bg-primary/10', borderColor: 'border-primary/20' },
   { icon: Grid, name: 'All Categories', color: 'text-gray-600', bgColor: 'bg-gray-100', borderColor: 'border-gray-200' },
 ];
 
@@ -47,9 +47,19 @@ export function HeroSection() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const videoId = "dK4EV9wJPm0";
 
+  const phrases = ['Smart Health', 'Expert Care', 'Better Living', 'Modern Wellness', 'Healthy India'];
+  const [phraseIndex, setPhraseIndex] = useState(0);
+
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
   const heroY = useTransform(scrollY, [0, 400], [0, -100]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPhraseIndex((prev) => (prev + 1) % phrases.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -76,7 +86,34 @@ export function HeroSection() {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-4xl md:text-6xl font-extrabold mb-4 text-gray-900 leading-[1.1] tracking-tight"
               >
-                Your Gateway to <span className="text-transparent bg-clip-text bg-brand-grad animate-gradient-x">Smart Health</span>
+                Your Gateway to <br className="md:hidden" />
+                <span className="relative inline-block overflow-hidden h-[1.2em] align-bottom">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={phrases[phraseIndex]}
+                      initial={{ opacity: 1 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="text-transparent bg-clip-text bg-brand-grad animate-gradient-x inline-block whitespace-nowrap pb-1"
+                    >
+                      {phrases[phraseIndex].split("").map((char, i) => (
+                        <motion.span
+                          key={i}
+                          initial={{ opacity: 0, x: -5 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ 
+                            delay: i * 0.05,
+                            duration: 0.1,
+                            ease: "easeOut"
+                          }}
+                        >
+                          {char}
+                        </motion.span>
+                      ))}
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
               </motion.h1>
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
