@@ -15,6 +15,7 @@ import BookAppointment from "../pages/BookAppointment";
 import CompleteProfile from "../pages/CompleteProfile";
 import Profile from "../pages/Profile";
 import BloodDonation from "../pages/BloodDonation";
+import GovtSchemes from "../pages/GovtSchemes";
 import NotFound from "../pages/NotFound";
 
 export const router = createBrowserRouter([
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
       { path: "dashboard", Component: Dashboard },
       { path: "profile", Component: Profile },
       { path: "blood-donation", Component: BloodDonation },
+      { path: "govt-schemes", Component: GovtSchemes },
       { path: "*", Component: NotFound },
     ],
   },

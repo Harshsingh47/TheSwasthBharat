@@ -81,7 +81,7 @@ export function HeroSection() {
           <div className="flex flex-col lg:flex-row justify-between items-center gap-12 mb-8">
             {/* Left: Heading Section */}
             <div className="max-w-2xl">
-              <motion.h1 
+              <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="text-4xl md:text-6xl font-extrabold mb-4 text-gray-900 leading-[1.1] tracking-tight"
