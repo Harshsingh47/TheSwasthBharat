@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
+import logo from '../components/brand/logo the swasth bharat (1).png';
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -116,9 +117,7 @@ export default function Signup() {
         <div className="bg-white rounded-2xl shadow-xl p-6">
           {/* Header */}
           <div className="text-center mb-5">
-            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
-              <span className="text-white font-bold text-xl">SB</span>
-            </div>
+            <img src={logo} alt="Logo" className="w-14 h-14 mx-auto mb-3 object-contain" />
             <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
             <p className="text-sm text-gray-600 mt-1">Join The Swasth Bharat today</p>
           </div>

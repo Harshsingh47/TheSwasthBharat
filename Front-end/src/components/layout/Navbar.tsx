@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
-import { Menu, X, ChevronDown, User, Calendar, Heart, LogOut, Bell, MessageSquare, Briefcase, TrendingUp, Megaphone, PlusCircle } from 'lucide-react';
+import { Menu, X, ChevronDown, User, Calendar, Heart, LogOut, Bell, MessageSquare, Briefcase, TrendingUp, Megaphone, PlusCircle, Droplet, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import logo from '../brand/logo the swasth bharat (1).png';
 
@@ -63,6 +63,9 @@ export function Navbar() {
     setIsLoggedIn(false);
     navigate('/');
   };
+
+  const isActive = (path: string) => location.pathname === path;
+  const isAboutActive = isActive('/about') || isActive('/careers');
 
   return (
     <>
@@ -132,11 +135,21 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            <Link to="/" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
+            <Link
+              to="/"
+              className={`px-3 py-2 font-medium transition-colors ${
+                isActive('/') ? 'text-primary font-bold' : 'text-gray-700 hover:text-cta'
+              }`}
+            >
               Home
             </Link>
             {isLoggedIn && (
-              <Link to="/dashboard" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
+              <Link
+                to="/dashboard"
+                className={`px-3 py-2 font-medium transition-colors ${
+                  isActive('/dashboard') ? 'text-primary font-bold' : 'text-gray-700 hover:text-cta'
+                }`}
+              >
                 Dashboard
               </Link>
             )}
@@ -146,7 +159,9 @@ export function Navbar() {
               <button
                 onMouseEnter={() => setIsAboutDropdownOpen(true)}
                 onMouseLeave={() => setIsAboutDropdownOpen(false)}
-                className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors"
+                className={`flex items-center space-x-1 px-3 py-2 font-medium transition-colors ${
+                  isAboutActive ? 'text-primary font-bold' : 'text-gray-700 hover:text-cta'
+                }`}
               >
                 <span>About</span>
                 <ChevronDown className={`w-4 h-4 transition-transform ${isAboutDropdownOpen ? 'rotate-180' : ''}`} />
@@ -173,26 +188,63 @@ export function Navbar() {
               )}
             </div>
 
-            <Link to="/blogs" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
+            <Link 
+              to="/blogs" 
+              className={`px-3 py-2 font-medium transition-colors ${
+                isActive('/blogs') ? 'text-primary font-bold' : 'text-gray-700 hover:text-cta'
+              }`}
+            >
               Blogs
             </Link>
-            <Link to="/find-doctors" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
+            <Link 
+              to="/find-doctors" 
+              className={`px-3 py-2 font-medium transition-colors ${
+                isActive('/find-doctors') ? 'text-primary font-bold' : 'text-gray-700 hover:text-cta'
+              }`}
+            >
               Find Doctors
             </Link>
-            <Link to="/donations" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
+            <Link 
+              to="/donations" 
+              className={`px-3 py-2 font-medium transition-colors ${
+                isActive('/donations') ? 'text-primary font-bold' : 'text-gray-700 hover:text-cta'
+              }`}
+            >
               Donations
             </Link>
-            <Link to="/contact" className="px-3 py-2 text-gray-700 hover:text-cta font-medium transition-colors">
+            <Link 
+              to="/contact" 
+              className={`px-3 py-2 font-medium transition-colors ${
+                isActive('/contact') ? 'text-primary font-bold' : 'text-gray-700 hover:text-cta'
+              }`}
+            >
               Contact
             </Link>
           </div>
 
           {/* Right Side - Login/Profile */}
           <div className="hidden md:flex items-center space-x-4">
-            <button className="p-2 text-gray-500 hover:text-blue-600 transition-colors relative">
+            <button className="p-2 text-gray-500 hover:text-blue-600 transition-colors relative mr-2">
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
+
+            <Link
+              to="/blood-donation"
+              className={`group flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm transition-all duration-300 border ${
+                isActive('/blood-donation') 
+                  ? 'bg-red-600 text-white border-red-600 shadow-lg shadow-red-200' 
+                  : 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border-red-100 hover:shadow-lg hover:shadow-red-200'
+              }`}
+            >
+              <div className="relative">
+                <Droplet className={`w-4 h-4 fill-current group-hover:animate-bounce ${isActive('/blood-donation') ? '' : ''}`} />
+                {!isActive('/blood-donation') && (
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping opacity-75 group-hover:hidden" />
+                )}
+              </div>
+              <span>Blood Support</span>
+            </Link>
             
             {!isLoggedIn ? (
               <Link
@@ -272,7 +324,9 @@ export function Navbar() {
             <Link
               to="/"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className={`block text-lg font-medium transition-colors ${
+                isActive('/') ? 'text-primary font-bold' : 'text-gray-700 hover:text-blue-600'
+              }`}
             >
               Home
             </Link>
@@ -280,7 +334,9 @@ export function Navbar() {
               <Link
                 to="/dashboard"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors"
+                className={`block text-lg font-medium transition-colors ${
+                  isActive('/dashboard') ? 'text-primary font-bold' : 'text-gray-700 hover:text-blue-600'
+                }`}
               >
                 Dashboard
               </Link>
@@ -288,35 +344,62 @@ export function Navbar() {
             <Link
               to="/about"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className={`block text-lg font-medium transition-colors ${
+                isActive('/about') ? 'text-primary font-bold' : 'text-gray-700 hover:text-blue-600'
+              }`}
             >
               Know About Us
             </Link>
             <Link
               to="/blogs"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className={`block text-lg font-medium transition-colors ${
+                isActive('/blogs') ? 'text-primary font-bold' : 'text-gray-700 hover:text-blue-600'
+              }`}
             >
               Blogs
             </Link>
             <Link
               to="/find-doctors"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className={`block text-lg font-medium transition-colors ${
+                isActive('/find-doctors') ? 'text-primary font-bold' : 'text-gray-700 hover:text-blue-600'
+              }`}
             >
               Find Doctors
             </Link>
             <Link
               to="/donations"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className={`block text-lg font-medium transition-colors ${
+                isActive('/donations') ? 'text-primary font-bold' : 'text-gray-700 hover:text-blue-600'
+              }`}
             >
               Donations
             </Link>
             <Link
+              to="/blood-donation"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${
+                isActive('/blood-donation')
+                  ? 'bg-red-600 text-white border-red-600 shadow-lg'
+                  : 'bg-red-50 text-red-600 border-red-100'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-xl shadow-sm ${isActive('/blood-donation') ? 'bg-white/20' : 'bg-white'}`}>
+                  <Droplet className="w-5 h-5" />
+                </div>
+                <span className="font-bold">Blood Support</span>
+              </div>
+              <ChevronRight className="w-5 h-5" />
+            </Link>
+            <Link
               to="/contact"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-lg font-medium text-gray-700 hover:text-blue-600 transition-colors"
+              className={`block text-lg font-medium transition-colors ${
+                isActive('/contact') ? 'text-primary font-bold' : 'text-gray-700 hover:text-blue-600'
+              }`}
             >
               Contact
             </Link>

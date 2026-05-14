@@ -59,9 +59,9 @@ export default function Contact() {
                   <div>
                     <h3 className="font-semibold mb-1">Address</h3>
                     <p className="text-gray-600">
-                      123 Healthcare Avenue,<br />
-                      Connaught Place,<br />
-                      New Delhi, India 110001
+                      Regional Hospital Solan,<br />
+                      The Mall Road, Solan,<br />
+                      Himachal Pradesh, India 173212
                     </p>
                   </div>
                 </div>
@@ -211,13 +211,31 @@ export default function Contact() {
         </div>
       </div>
 
-      {/* Map Section (Placeholder) */}
-      <section className="py-16 px-4 bg-gray-100">
+      {/* Map Section */}
+      <section className="py-16 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-gray-300 rounded-xl h-96 flex items-center justify-center">
-            <div className="text-center">
-              <MapPin className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-              <p className="text-gray-600">Map integration would go here</p>
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl border-8 border-gray-100 h-[500px]">
+            <iframe
+              src="https://maps.google.com/maps?q=Regional%20Hospital%20Solan&t=&z=15&ie=UTF8&iwloc=&output=embed"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={true}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Regional Hospital Solan Map"
+              className="grayscale-[0.1] contrast-[1.1]"
+            ></iframe>
+            <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-white/20 hidden md:block">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+                  <MapPin className="text-red-500 w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900">Regional Hospital Solan</h4>
+                  <p className="text-xs text-gray-500 font-medium">Community Health Hub</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

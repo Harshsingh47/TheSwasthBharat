@@ -69,7 +69,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative bg-transparent py-8 md:py-12 overflow-hidden">
+    <section className="relative bg-transparent py-6 md:py-10 overflow-hidden">
       {/* Background Blobs */}
       <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px] animate-pulse-glow" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] bg-accent/20 rounded-full blur-[100px] animate-pulse-glow" style={{ animationDelay: '2s' }} />
@@ -78,7 +78,7 @@ export function HeroSection() {
         {/* Scroll-Responsive Content Wrapper */}
         <motion.div style={{ opacity: heroOpacity, y: heroY }}>
           {/* Top Row: Heading + Trust Widget */}
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-12 mb-10">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-12 mb-8">
             {/* Left: Heading Section */}
             <div className="max-w-2xl">
               <motion.h1 
@@ -202,7 +202,7 @@ export function HeroSection() {
           </div>
 
           {/* Premium Search Bar */}
-          <div className="flex flex-col md:flex-row gap-0 mb-12 glass rounded-2xl overflow-hidden p-1.5 shadow-xl border-white/50">
+          <div className="flex flex-col md:flex-row gap-0 mb-8 glass rounded-2xl overflow-hidden p-1.5 shadow-xl border-white/50">
             <div className="flex-[0.3] flex items-center px-5 py-3 group">
               <MapPin className="text-primary w-4 h-4 mr-2" />
               <input
@@ -233,7 +233,7 @@ export function HeroSection() {
         </motion.div>
 
         {/* Main Banner Slider */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
           <div className="lg:col-span-7 relative h-[350px] md:h-[450px] rounded-3xl overflow-hidden shadow-xl group border-2 border-white">
             <AnimatePresence mode="wait">
               <motion.div
