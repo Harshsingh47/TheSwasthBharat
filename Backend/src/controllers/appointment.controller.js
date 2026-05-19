@@ -33,8 +33,9 @@ exports.createAppointment = async (req, res) => {
 exports.getMyAppointments = async (req, res) => {
   try {
     const userId = req.user.userId;
+    const role = req.user.role;
 
-    const appointments = await getMyAppointmentsService(userId);
+    const appointments = await getMyAppointmentsService(userId, role);
 
     res.json({ appointments });
   } catch (error) {

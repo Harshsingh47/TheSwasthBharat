@@ -42,25 +42,43 @@ exports.createAppointmentService = async (userId, data) => {
   return appointment;
 };
 
-// GET MY APPOINTMENTS (PATIENT)
-exports.getMyAppointmentsService = async (userId) => {
-  const appointments = await prisma.appointment.findMany({
+// GET MY APPOINTMENTS (PATIENT OR DOCTOR)
+exports.getMyAppointmentsService = async (userId, role) => {
+  if (role === "DOCTOR") {
+    const doctorProfile = await prisma.doctorProfile.findUnique({
+      where: { userId },
+    });
+    
+    if (!doctorProfile) return [];
+
+    return await prisma.appointment.findMany({
+      where: { doctorId: doctorProfile.id },
+      include: {
+        patient: {
+          select: {
+            name: true,
+            email: true,
+            phone: true,
+            avatarUrl: true
+          },
+        },
+      },
+      orderBy: { date: "asc" },
+    });
+  }
+
+  // PATIENT ROLE
+  return await prisma.appointment.findMany({
     where: { patientId: userId },
     include: {
       doctor: {
         include: {
           user: {
-            select: {
-              name: true,
-            },
+            select: { name: true, avatarUrl: true },
           },
         },
       },
     },
-    orderBy: {
-      date: "desc",
-    },
+    orderBy: { date: "asc" },
   });
-
-  return appointments;
 };

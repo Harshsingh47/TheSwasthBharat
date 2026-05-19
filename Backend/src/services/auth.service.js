@@ -6,6 +6,8 @@ const { OAuth2Client } = require("google-auth-library");
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const VALID_ROLES = ["DOCTOR", "PATIENT"];
+const otpStore = new Map();
+exports.otpStore = otpStore;
 
 exports.signupService = async ({ name, email, phone, password, role }) => {
   if (!VALID_ROLES.includes(role)) throw new Error("Invalid role");
@@ -21,7 +23,14 @@ exports.signupService = async ({ name, email, phone, password, role }) => {
 
   const newUser = await prisma.$transaction(async (tx) => {
     const user = await tx.user.create({
-      data: { name, email: normalizedEmail, phone, password: hashedPassword, role },
+      data: { 
+        name, 
+        email: normalizedEmail, 
+        phone, 
+        password: hashedPassword, 
+        role,
+        isEmailVerified: false // Everyone needs OTP verification before login
+      },
     });
 
     if (role === "DOCTOR") {
@@ -33,8 +42,22 @@ exports.signupService = async ({ name, email, phone, password, role }) => {
     return user;
   });
 
+  const requiresOtp = true;
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  otpStore.set(normalizedEmail, {
+    otp,
+    expiresAt: Date.now() + 10 * 60 * 1000 // 10 mins expiration
+  });
+
+  console.log("\n==========================================");
+  console.log(`🔑 OTP VERIFICATION CODE FOR ${role} SIGNUP`);
+  console.log(`   Email: ${normalizedEmail}`);
+  console.log(`   Phone: ${phone}`);
+  console.log(`   Code:  ${otp}`);
+  console.log("==========================================\n");
+
   const { password: _, ...userWithoutPassword } = newUser;
-  return userWithoutPassword;
+  return { ...userWithoutPassword, requiresOtp, otp };
 };
 
 exports.loginService = async (email, password) => {
@@ -46,6 +69,14 @@ exports.loginService = async (email, password) => {
   });
 
   if (!user) throw new Error("Invalid email or password");
+
+  if (!user.isEmailVerified) {
+    if (user.role === "DOCTOR") {
+      throw new Error("Email & phone not verified. Please verify your credentials via OTP.");
+    } else {
+      throw new Error("Phone number not verified. Please verify your phone via OTP.");
+    }
+  }
 
   if (!user.password) {
     throw new Error("Please login with Google");
@@ -132,6 +163,14 @@ exports.googleAuthService = async (token, role) => {
     }
   }
 
+  if (!user.phone) {
+    return {
+      requiresPhoneInput: true,
+      email: user.email,
+      message: "Please complete registration by verifying your phone number."
+    };
+  }
+
   const accessToken = jwt.sign(
     { userId: user.id, role: user.role },
     process.env.JWT_SECRET,
@@ -148,5 +187,67 @@ exports.googleAuthService = async (token, role) => {
     accessToken,
     refreshToken,
     user: { id: user.id, name: user.name, role: user.role },
+  };
+};
+
+exports.verifyOtpService = async (email, otp) => {
+  const normalizedEmail = email.toLowerCase().trim();
+  const record = otpStore.get(normalizedEmail);
+
+  if (!record) {
+    throw new Error("No OTP request found for this email. Please sign up or resend OTP.");
+  }
+
+  if (record.expiresAt < Date.now()) {
+    otpStore.delete(normalizedEmail);
+    throw new Error("OTP has expired. Please request a new one.");
+  }
+
+  if (record.otp !== otp) {
+    throw new Error("Invalid OTP code. Please check your credentials.");
+  }
+
+  // Update user in DB
+  await prisma.user.update({
+    where: { email: normalizedEmail },
+    data: { isEmailVerified: true }
+  });
+
+  otpStore.delete(normalizedEmail);
+  return true;
+};
+
+exports.googleLinkPhoneService = async (email, phone) => {
+  const normalizedEmail = email.toLowerCase().trim();
+  const user = await prisma.user.findUnique({
+    where: { email: normalizedEmail }
+  });
+
+  if (!user) throw new Error("Google account record not found.");
+
+  // Save phone number
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { phone }
+  });
+
+  // Generate phone verification OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  otpStore.set(normalizedEmail, {
+    otp,
+    expiresAt: Date.now() + 10 * 60 * 1000 // 10 mins
+  });
+
+  console.log("\n==========================================");
+  console.log(`📞 OTP FOR GOOGLE SIGNUP PHONE VERIFICATION`);
+  console.log(`   Email: ${normalizedEmail}`);
+  console.log(`   Phone: ${phone}`);
+  console.log(`   Code:  ${otp}`);
+  console.log("==========================================\n");
+
+  return {
+    email: normalizedEmail,
+    requiresOtp: true,
+    otp
   };
 };

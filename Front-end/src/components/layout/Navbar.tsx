@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { Menu, X, ChevronDown, User, Calendar, Heart, LogOut, Bell, MessageSquare, Briefcase, TrendingUp, Megaphone, PlusCircle, Droplet, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useQuery } from '@tanstack/react-query';
 import logo from '../brand/logo the swasth bharat (1).png';
+import { useAuthStore } from '../../store/authStore';
+import { fetchProfile } from '../../features/dashboard/api/dashboardApi';
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -21,46 +24,16 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem('token'));
-  const [userData, setUserData] = useState<any>(null);
-
-  // Sync auth state on route changes
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsLoggedIn(!!token);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem('token');
-      const role = localStorage.getItem('role');
-      if (token && role) {
-        try {
-          const endpoint = role === 'DOCTOR' ? '/api/doctor/profile' : '/api/patient/profile';
-          const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-          const data = await res.json();
-          if (res.ok) {
-            setUserData(data.profile);
-          }
-        } catch (error) {
-          console.error("Error fetching navbar profile:", error);
-        }
-      }
-    };
-
-    if (isLoggedIn) {
-      fetchProfile();
-    }
-  }, [isLoggedIn]);
+  const { isAuthenticated: isLoggedIn, logout, role } = useAuthStore();
+  
+  const { data: userData } = useQuery({
+    queryKey: ['profile'],
+    queryFn: fetchProfile,
+    enabled: isLoggedIn,
+  });
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    setIsLoggedIn(false);
+    logout();
     navigate('/');
   };
 
@@ -153,9 +126,21 @@ export function Navbar() {
                 Dashboard
               </Link>
             )}
+            {isLoggedIn && role === 'ADMIN' && (
+              <Link
+                to="/admin"
+                className={`px-3 py-2 font-medium transition-colors ${
+                  isActive('/admin') ? 'text-primary font-bold' : 'text-gray-700 hover:text-cta'
+                }`}
+              >
+                Admin Panel
+              </Link>
+            )}
 
-            {/* About Dropdown */}
-            <div className="relative">
+            {/* About Dropdown and other links - Hidden for ADMIN */}
+            {role !== 'ADMIN' && (
+              <>
+                <div className="relative">
               <button
                 onMouseEnter={() => setIsAboutDropdownOpen(true)}
                 onMouseLeave={() => setIsAboutDropdownOpen(false)}
@@ -196,14 +181,16 @@ export function Navbar() {
             >
               Blogs
             </Link>
-            <Link 
-              to="/find-doctors" 
-              className={`px-3 py-2 font-medium transition-colors ${
-                isActive('/find-doctors') ? 'text-primary font-bold' : 'text-gray-700 hover:text-cta'
-              }`}
-            >
-              Find Doctors
-            </Link>
+            {role !== 'DOCTOR' && (
+              <Link 
+                to="/find-doctors" 
+                className={`px-3 py-2 font-medium transition-colors ${
+                  isActive('/find-doctors') ? 'text-primary font-bold' : 'text-gray-700 hover:text-cta'
+                }`}
+              >
+                Find Doctors
+              </Link>
+            )}
             <Link 
               to="/donations" 
               className={`px-3 py-2 font-medium transition-colors ${
@@ -219,32 +206,38 @@ export function Navbar() {
               }`}
             >
               Contact
-            </Link>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Right Side - Login/Profile */}
           <div className="hidden md:flex items-center space-x-4">
-            <button className="p-2 text-gray-500 hover:text-blue-600 transition-colors relative mr-2">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
+            {role !== 'ADMIN' && (
+              <>
+                <button className="p-2 text-gray-500 hover:text-blue-600 transition-colors relative mr-2">
+                  <Bell className="w-5 h-5" />
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
 
-            <Link
-              to="/blood-donation"
-              className={`group flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm transition-all duration-300 border ${
-                isActive('/blood-donation') 
-                  ? 'bg-red-600 text-white border-red-600 shadow-lg shadow-red-200' 
-                  : 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border-red-100 hover:shadow-lg hover:shadow-red-200'
-              }`}
-            >
-              <div className="relative">
-                <Droplet className={`w-4 h-4 fill-current group-hover:animate-bounce ${isActive('/blood-donation') ? '' : ''}`} />
-                {!isActive('/blood-donation') && (
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping opacity-75 group-hover:hidden" />
-                )}
-              </div>
-              <span>Blood Support</span>
-            </Link>
+                <Link
+                  to="/blood-donation"
+                  className={`group flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm transition-all duration-300 border ${
+                    isActive('/blood-donation') 
+                      ? 'bg-red-600 text-white border-red-600 shadow-lg shadow-red-200' 
+                      : 'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border-red-100 hover:shadow-lg hover:shadow-red-200'
+                  }`}
+                >
+                  <div className="relative">
+                    <Droplet className={`w-4 h-4 fill-current group-hover:animate-bounce ${isActive('/blood-donation') ? '' : ''}`} />
+                    {!isActive('/blood-donation') && (
+                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping opacity-75 group-hover:hidden" />
+                    )}
+                  </div>
+                  <span>Blood Support</span>
+                </Link>
+              </>
+            )}
             
             {!isLoggedIn ? (
               <Link
@@ -257,9 +250,17 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-200 transition-all"
+                  className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-200 transition-all overflow-hidden border border-gray-200"
                 >
-                  <User className="w-5 h-5" />
+                  {userData?.user?.avatarUrl ? (
+                    <img 
+                      src={userData.user.avatarUrl} 
+                      alt={userData?.user?.name || userData?.name} 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-5 h-5" />
+                  )}
                 </button>
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 top-full mt-2 w-52 bg-white shadow-xl py-2 border border-gray-100 animate-in fade-in slide-in-from-top-1 duration-200">
@@ -275,22 +276,26 @@ export function Navbar() {
                       <User className="w-4 h-4" />
                       <span>My Profile</span>
                     </Link>
-                    <Link
-                      to="/dashboard"
-                      onClick={() => setIsProfileDropdownOpen(false)}
-                      className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                    >
-                      <Calendar className="w-4 h-4" />
-                      <span>Appointments</span>
-                    </Link>
-                    <Link
-                      to="/dashboard"
-                      onClick={() => setIsProfileDropdownOpen(false)}
-                      className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                    >
-                      <Heart className="w-4 h-4" />
-                      <span>Saved Doctors</span>
-                    </Link>
+                    {role !== 'ADMIN' && (
+                      <>
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                          className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                        >
+                          <Calendar className="w-4 h-4" />
+                          <span>Appointments</span>
+                        </Link>
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setIsProfileDropdownOpen(false)}
+                          className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                        >
+                          <Heart className="w-4 h-4" />
+                          <span>Saved Doctors</span>
+                        </Link>
+                      </>
+                    )}
                     <button
                       onClick={() => {
                         setIsProfileDropdownOpen(false);
@@ -359,15 +364,17 @@ export function Navbar() {
             >
               Blogs
             </Link>
-            <Link
-              to="/find-doctors"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`block text-lg font-medium transition-colors ${
-                isActive('/find-doctors') ? 'text-primary font-bold' : 'text-gray-700 hover:text-blue-600'
-              }`}
-            >
-              Find Doctors
-            </Link>
+            {role !== 'DOCTOR' && (
+              <Link
+                to="/find-doctors"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block text-lg font-medium transition-colors ${
+                  isActive('/find-doctors') ? 'text-primary font-bold' : 'text-gray-700 hover:text-blue-600'
+                }`}
+              >
+                Find Doctors
+              </Link>
+            )}
             <Link
               to="/donations"
               onClick={() => setIsMobileMenuOpen(false)}

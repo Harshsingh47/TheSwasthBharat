@@ -47,7 +47,13 @@ export function HeroSection() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const videoId = "dK4EV9wJPm0";
 
-  const phrases = ['Smart Health', 'Expert Care', 'Better Living', 'Modern Wellness', 'Healthy India'];
+  const phrases = [
+    { text: 'Smart Health', color: 'text-primary' },
+    { text: 'Expert Care', color: 'text-cta' },
+    { text: 'Better Living', color: 'text-secondary' },
+    { text: 'Modern Wellness', color: 'text-success' },
+    { text: 'Healthy India', color: 'text-pink' }
+  ];
   const [phraseIndex, setPhraseIndex] = useState(0);
 
   const { scrollY } = useScroll();
@@ -90,14 +96,14 @@ export function HeroSection() {
                 <span className="relative inline-block overflow-hidden h-[1.2em] align-bottom">
                   <AnimatePresence mode="wait">
                     <motion.span
-                      key={phrases[phraseIndex]}
+                      key={phrases[phraseIndex].text}
                       initial={{ opacity: 1 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.3 }}
-                      className="text-transparent bg-clip-text bg-brand-grad animate-gradient-x inline-block whitespace-nowrap pb-1"
+                      className={`${phrases[phraseIndex].color} inline-block whitespace-nowrap pb-1 drop-shadow-sm`}
                     >
-                      {phrases[phraseIndex].split("").map((char, i) => (
+                      {phrases[phraseIndex].text.split("").map((char, i) => (
                         <motion.span
                           key={i}
                           initial={{ opacity: 0, x: -5 }}
@@ -119,7 +125,7 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-lg md:text-xl text-gray-600 font-medium max-w-xl"
+                className="text-base md:text-lg text-gray-500 font-medium max-w-lg leading-relaxed"
               >
                 Connecting communities with technology-driven healthcare solutions across India.
               </motion.p>

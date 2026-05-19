@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 import logo from '../components/brand/logo the swasth bharat (1).png';
+import { useAuthStore } from '../store/authStore';
+import { toast } from 'sonner';
+import api from '../lib/axios';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [loginMethod, setLoginMethod] = useState<'email' | 'phone'>('email');
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     phone: '',
@@ -15,16 +20,18 @@ export default function Login() {
   });
 
   const checkProfileAndRedirect = async (token: string, role: string) => {
+    if (role === 'ADMIN') {
+      navigate('/admin');
+      return;
+    }
+
     try {
       const endpoint = role === 'DOCTOR' ? '/api/doctor/profile' : '/api/patient/profile';
-      const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const res = await api.get(endpoint, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res.json();
-      if (res.ok && data.profile) {
-        const isComplete = role === 'DOCTOR' ? !!data.profile.specialty : !!data.profile.age;
+      if (res.data.profile) {
+        const isComplete = role === 'DOCTOR' ? !!res.data.profile.specialty : !!res.data.profile.age;
         if (!isComplete) {
           navigate('/complete-profile');
         } else {
@@ -41,55 +48,41 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
+      const res = await api.post('/api/auth/login', {
+        email: formData.email,
+        password: formData.password,
       });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token', data.accessToken);
-        localStorage.setItem('role', data.user.role);
-        alert('Login successful!');
-        await checkProfileAndRedirect(data.accessToken, data.user.role);
-      } else {
-        alert(`Login failed: ${data.message || 'Unknown error'}`);
-      }
-    } catch (error) {
+      const data = res.data;
+      login(data.accessToken, data.user.role, data.user);
+      toast.success('Login successful!');
+      await checkProfileAndRedirect(data.accessToken, data.user.role);
+    } catch (error: any) {
       console.error('Login error:', error);
-      alert('An error occurred during login.');
+      toast.error(`Login failed: ${error.response?.data?.message || 'Unknown error'}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/google`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          token: credentialResponse.credential,
-        }),
+      const res = await api.post('/api/auth/google', {
+        token: credentialResponse.credential,
       });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token', data.accessToken);
-        localStorage.setItem('role', data.user.role);
-        alert('Google Login successful!');
-        await checkProfileAndRedirect(data.accessToken, data.user.role);
+      const data = res.data;
+      if (data.requiresPhoneInput) {
+        toast.info('Google account detected! Please complete your phone number verification on the signup page.');
+        navigate('/signup');
       } else {
-        alert(`Google login failed: ${data.message || 'Unknown error'}`);
+        login(data.accessToken, data.user.role, data.user);
+        toast.success('Google Login successful!');
+        await checkProfileAndRedirect(data.accessToken, data.user.role);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Google login error:', error);
-      alert('An error occurred during Google login.');
+      toast.error(`Google login failed: ${error.response?.data?.message || 'Unknown error'}`);
     }
   };
 
@@ -214,9 +207,17 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-blue-600 transition-colors font-bold text-sm shadow-md"
+              disabled={isLoading}
+              className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-blue-600 transition-colors font-bold text-sm shadow-md flex items-center justify-center gap-2 active:scale-95 disabled:bg-blue-400 disabled:cursor-not-allowed transition-all"
             >
-              Sign In
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Signing In...
+                </>
+              ) : (
+                'Sign In'
+              )}
             </button>
           </form>
 

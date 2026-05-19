@@ -1,4 +1,4 @@
-import { HeroSection } from '../sections/home/HeroSection';
+import { HeroSection, AssociatesSection } from '../sections/home';
 import { TopDoctors } from '../sections/home/TopDoctors';
 import { SuccessStories } from '../sections/home/SuccessStories';
 import { BlogPreview } from '../sections/home/BlogPreview';
@@ -10,6 +10,7 @@ export default function Home() {
       <div className="max-w-[1440px] mx-auto bg-surface rounded-[2rem] overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.03)] border border-white/50">
         <HeroSection />
         <TopDoctors />
+        <AssociatesSection />
         <SuccessStories />
         <BlogPreview />
         <SocialImpact />

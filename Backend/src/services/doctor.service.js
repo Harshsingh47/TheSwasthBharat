@@ -1,5 +1,21 @@
 const prisma = require("../config/prisma");
 
+function convertTo24Hour(time12h) {
+  try {
+    const [time, modifier] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+    if (hours === '12') {
+      hours = '00';
+    }
+    if (modifier && modifier.toUpperCase() === 'PM') {
+      hours = parseInt(hours, 10) + 12;
+    }
+    return `${hours.toString().padStart(2, '0')}:${minutes || '00'}`;
+  } catch (error) {
+    return "09:00"; // fallback
+  }
+}
+
 // UPDATE DOCTOR PROFILE
 exports.updateDoctorProfileService = async (userId, data) => {
   const {
@@ -16,6 +32,9 @@ exports.updateDoctorProfileService = async (userId, data) => {
     idProofUrl,
     languagesSpoken,
     consultationMode,
+    profilePicture,
+    workingHours,
+    availability,
   } = data;
 
   const existingProfile = await prisma.doctorProfile.findUnique({
@@ -24,6 +43,77 @@ exports.updateDoctorProfileService = async (userId, data) => {
 
   if (!existingProfile) {
     throw new Error("Doctor profile not found");
+  }
+
+  // Update User avatar if profilePicture is present
+  if (profilePicture) {
+    const { uploadFileToCDN } = require("./upload.service");
+    const cdnUrl = await uploadFileToCDN(profilePicture);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl: cdnUrl }
+    });
+  }
+
+  // Parse and update Availability if provided
+  if (workingHours && availability) {
+    let startTime = "09:00";
+    let endTime = "17:00";
+    
+    try {
+      const parts = workingHours.split('-');
+      if (parts.length === 2) {
+        startTime = convertTo24Hour(parts[0].trim());
+        endTime = convertTo24Hour(parts[1].trim());
+      }
+    } catch(e) {}
+
+    let days = [];
+    const avail = availability.toLowerCase();
+    if (avail.includes('mon - fri') || avail.includes('monday - friday')) {
+      days = [1, 2, 3, 4, 5];
+    } else if (avail.includes('mon - sat') || avail.includes('monday - saturday')) {
+      days = [1, 2, 3, 4, 5, 6];
+    } else if (avail.includes('weekends')) {
+      days = [0, 6];
+    } else if (avail.includes('everyday')) {
+      days = [0, 1, 2, 3, 4, 5, 6];
+    } else if (avail.includes('mon, wed, fri')) {
+      days = [1, 3, 5];
+    } else if (avail.includes('tue, thu, sat')) {
+      days = [2, 4, 6];
+    }
+
+    if (days.length > 0) {
+      // Delete old availabilities
+      await prisma.doctorAvailability.deleteMany({
+        where: { doctorId: existingProfile.id }
+      });
+
+      // Create new availabilities
+      const availabilityData = days.map(day => ({
+        doctorId: existingProfile.id,
+        dayOfWeek: day,
+        startTime,
+        endTime,
+        slotDuration: 30
+      }));
+
+      await prisma.doctorAvailability.createMany({
+        data: availabilityData
+      });
+    }
+  }
+
+  const { uploadFileToCDN } = require("./upload.service");
+  let degreeUrl = degreeCertificateUrl;
+  let idProof = idProofUrl;
+
+  if (degreeCertificateUrl) {
+    degreeUrl = await uploadFileToCDN(degreeCertificateUrl);
+  }
+  if (idProofUrl) {
+    idProof = await uploadFileToCDN(idProofUrl);
   }
 
   const updatedProfile = await prisma.doctorProfile.update({
@@ -39,8 +129,8 @@ exports.updateDoctorProfileService = async (userId, data) => {
       university,
       registrationNumber,
       hospitalAffiliation,
-      degreeCertificateUrl,
-      idProofUrl,
+      degreeCertificateUrl: degreeUrl,
+      idProofUrl: idProof,
       languagesSpoken,
       consultationMode,
     },
@@ -60,6 +150,7 @@ exports.getDoctorProfileService = async (userId) => {
           name: true,
           email: true,
           phone: true,
+          avatarUrl: true,
         },
       },
     },
@@ -127,6 +218,7 @@ exports.getDoctorsListService = async (query) => {
         select: {
           id: true,
           name: true,
+          avatarUrl: true,
         },
       },
     },

@@ -1,13 +1,26 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Phone, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
+import { toast } from 'sonner';
 import logo from '../components/brand/logo the swasth bharat (1).png';
+import { useAuthStore } from '../store/authStore';
+import api from '../lib/axios';
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { login } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState<'patient' | 'doctor'>('patient');
+  const [requiresOtp, setRequiresOtp] = useState(false);
+  const [otpEmail, setOtpEmail] = useState('');
+  const [otpPhone, setOtpPhone] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [receivedOtp, setReceivedOtp] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [requiresGooglePhone, setRequiresGooglePhone] = useState(false);
+  const [googleEmail, setGoogleEmail] = useState('');
+  const [googlePhone, setGooglePhone] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,14 +32,11 @@ export default function Signup() {
   const checkProfileAndRedirect = async (token: string, role: string) => {
     try {
       const endpoint = role === 'DOCTOR' ? '/api/doctor/profile' : '/api/patient/profile';
-      const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const res = await api.get(endpoint, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      const data = await res.json();
-      if (res.ok && data.profile) {
-        const isComplete = role === 'DOCTOR' ? !!data.profile.specialty : !!data.profile.age;
+      if (res.data.profile) {
+        const isComplete = role === 'DOCTOR' ? !!res.data.profile.specialty : !!res.data.profile.age;
         if (!isComplete) {
           navigate('/complete-profile');
         } else {
@@ -44,63 +54,115 @@ export default function Signup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      toast.error('Passwords do not match!');
       return;
     }
     
+    setIsLoading(true);
     try {
       const role = userType === 'doctor' ? 'DOCTOR' : 'PATIENT';
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          password: formData.password,
-          role: role,
-        }),
+      const res = await api.post('/api/auth/signup', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: role,
       });
-      const data = await res.json();
-      if (res.ok) {
-        alert('Account created successfully! Please login.');
-        navigate('/login');
+      
+      if (res.data.requiresOtp) {
+        setRequiresOtp(true);
+        setOtpEmail(formData.email);
+        setOtpPhone(formData.phone);
+        setReceivedOtp(res.data.otp || '');
+        toast.info(
+          role === 'DOCTOR'
+            ? 'Verification OTP code sent to your email & phone number!'
+            : 'Verification OTP code sent to your phone number!'
+        );
       } else {
-        alert(`Signup failed: ${data.message || 'Unknown error'}`);
+        toast.success('Account created successfully! Please login.');
+        navigate('/login');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Signup error:', error);
-      alert('An error occurred during signup.');
+      toast.error(`Signup failed: ${error.response?.data?.message || 'Unknown error'}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otpCode || otpCode.length !== 6) {
+      toast.error('Please enter a valid 6-digit OTP code!');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await api.post('/api/auth/verify-otp', {
+        email: otpEmail,
+        otp: otpCode,
+      });
+      toast.success('Account successfully verified! You can now log in.');
+      navigate('/login');
+    } catch (error: any) {
+      console.error('OTP verification error:', error);
+      toast.error(error.response?.data?.message || 'Invalid OTP code. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
       const role = userType === 'doctor' ? 'DOCTOR' : 'PATIENT';
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/google`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          token: credentialResponse.credential,
-          role: role,
-        }),
+      const res = await api.post('/api/auth/google', {
+        token: credentialResponse.credential,
+        role: role,
       });
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token', data.accessToken);
-        localStorage.setItem('role', data.user.role);
-        alert('Google Signup successful!');
-        await checkProfileAndRedirect(data.accessToken, data.user.role);
+      
+      const data = res.data;
+      if (data.requiresPhoneInput) {
+        setGoogleEmail(data.email);
+        setRequiresGooglePhone(true);
+        toast.info('Google account detected! Please verify your phone number to complete signup.');
       } else {
-        alert(`Google signup failed: ${data.message || 'Unknown error'}`);
+        login(data.accessToken, data.user.role, data.user);
+        toast.success('Google Signup successful!');
+        await checkProfileAndRedirect(data.accessToken, data.user.role);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Google signup error:', error);
-      alert('An error occurred during Google signup.');
+      toast.error(`Google signup failed: ${error.response?.data?.message || 'Unknown error'}`);
+    }
+  };
+
+  const handleGooglePhoneSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!googlePhone) {
+      toast.error('Please enter a valid phone number!');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const res = await api.post('/api/auth/google-link-phone', {
+        email: googleEmail,
+        phone: googlePhone,
+      });
+
+      setRequiresGooglePhone(false);
+      setRequiresOtp(true);
+      setOtpEmail(googleEmail);
+      setOtpPhone(googlePhone);
+      setReceivedOtp(res.data.otp || '');
+      toast.success('Phone number linked! Verification OTP code has been generated.');
+    } catch (error: any) {
+      console.error('Google phone link error:', error);
+      toast.error(error.response?.data?.message || 'Failed to send OTP to your phone.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -115,209 +177,353 @@ export default function Signup() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-green-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-xl p-6">
-          {/* Header */}
-          <div className="text-center mb-5">
-            <img src={logo} alt="Logo" className="w-14 h-14 mx-auto mb-3 object-contain" />
-            <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
-            <p className="text-sm text-gray-600 mt-1">Join The Swasth Bharat today</p>
-          </div>
-
-          {/* User Type Toggle */}
-          <div className="flex rounded-lg bg-gray-100 p-1 mb-6">
-            <button
-              onClick={() => setUserType('patient')}
-              className={`flex-1 py-2 rounded-md transition-colors ${
-                userType === 'patient'
-                  ? 'bg-white shadow-sm text-primary'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              I'm a Patient
-            </button>
-            <button
-              onClick={() => setUserType('doctor')}
-              className={`flex-1 py-2 rounded-md transition-colors ${
-                userType === 'doctor'
-                  ? 'bg-white shadow-sm text-primary'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              I'm a Doctor
-            </button>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2">
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                  placeholder="Your full name"
-                />
+          {requiresGooglePhone ? (
+            <>
+              {/* Header */}
+              <div className="text-center mb-6">
+                <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 text-primary animate-bounce">
+                  <Phone className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Verify Phone Number</h2>
+                <p className="text-sm text-gray-600 mt-1">To complete your Google Sign Up, please provide a phone number to verify via OTP.</p>
               </div>
-            </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                  placeholder="your.email@example.com"
-                />
-              </div>
-            </div>
+              <form onSubmit={handleGooglePhoneSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="googlePhone" className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="tel"
+                      id="googlePhone"
+                      value={googlePhone}
+                      onChange={(e) => setGooglePhone(e.target.value)}
+                      required
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                      placeholder="+91 1234 567 890"
+                    />
+                  </div>
+                </div>
 
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium mb-2">
-                Phone Number
-              </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                  placeholder="+91 1234 567 890"
-                />
-              </div>
-            </div>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-blue-600 transition-colors font-bold text-sm shadow-md flex items-center justify-center gap-2 active:scale-95 disabled:bg-blue-400 disabled:cursor-not-allowed transition-all"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Sending OTP...
+                    </>
+                  ) : (
+                    'Verify & Link Phone'
+                  )}
+                </button>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                  placeholder="Create a password"
-                />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  onClick={() => {
+                    setRequiresGooglePhone(false);
+                    setGooglePhone('');
+                  }}
+                  className="w-full text-center text-sm text-gray-500 hover:text-gray-700 underline"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  Cancel & Go Back
+                </button>
+              </form>
+            </>
+          ) : requiresOtp ? (
+            <>
+              {/* Header */}
+              <div className="text-center mb-6">
+                <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 text-primary animate-pulse">
+                  <Mail className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">OTP Verification</h2>
+                {userType === 'doctor' ? (
+                  <>
+                    <p className="text-sm text-gray-600 mt-1">We have sent a verification code to both:</p>
+                    <p className="text-sm font-bold text-gray-800">{otpEmail}</p>
+                    <p className="text-sm font-bold text-gray-800">{otpPhone}</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-600 mt-1">We have sent a verification code to your phone number:</p>
+                    <p className="text-sm font-bold text-gray-800">{otpPhone}</p>
+                  </>
+                )}
+              </div>
+
+              {/* Development Help Box */}
+              {receivedOtp && (
+                <div className="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-xl text-center mb-6 text-sm">
+                  <p className="font-semibold mb-1">🧪 Demo Sandbox OTP Code:</p>
+                  <p className="text-2xl font-bold tracking-widest text-primary">{receivedOtp}</p>
+                  <p className="text-xs text-blue-600 mt-1">(Real email/SMS service simulated. Enter the code above.)</p>
+                </div>
+              )}
+
+              <form onSubmit={handleVerifyOtp} className="space-y-6">
+                <div>
+                  <label htmlFor="otpCode" className="block text-sm font-medium text-gray-700 mb-2 text-center">
+                    Enter 6-Digit Code
+                  </label>
+                  <input
+                    type="text"
+                    id="otpCode"
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    required
+                    maxLength={6}
+                    className="w-full text-center tracking-[0.75em] font-mono text-2xl py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    placeholder="000000"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-primary text-white py-3 rounded-xl hover:bg-blue-600 transition-colors font-bold text-sm shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 disabled:bg-blue-400 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Verifying Code...
+                    </>
+                  ) : (
+                    'Verify & Activate Account'
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRequiresOtp(false);
+                    setOtpCode('');
+                  }}
+                  className="w-full text-center text-sm text-gray-500 hover:text-gray-700 underline"
+                >
+                  Go Back to Signup
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              {/* Header */}
+              <div className="text-center mb-5">
+                <img src={logo} alt="Logo" className="w-14 h-14 mx-auto mb-3 object-contain" />
+                <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
+                <p className="text-sm text-gray-600 mt-1">Join The Swasth Bharat today</p>
+              </div>
+
+              {/* User Type Toggle */}
+              <div className="flex rounded-lg bg-gray-100 p-1 mb-6">
+                <button
+                  onClick={() => setUserType('patient')}
+                  className={`flex-1 py-2 rounded-md transition-colors ${
+                    userType === 'patient'
+                      ? 'bg-white shadow-sm text-primary'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  I'm a Patient
+                </button>
+                <button
+                  onClick={() => setUserType('doctor')}
+                  className={`flex-1 py-2 rounded-md transition-colors ${
+                    userType === 'doctor'
+                      ? 'bg-white shadow-sm text-primary'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  I'm a Doctor
                 </button>
               </div>
-            </div>
 
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-                  placeholder="Confirm your password"
-                />
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium mb-2">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                      placeholder="Your full name"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium mb-2">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                      placeholder="your.email@example.com"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                    Phone Number
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                      placeholder="+91 1234 567 890"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium mb-2">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                      placeholder="Create a password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                      placeholder="Confirm your password"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    required
+                    className="w-4 h-4 mt-1 text-primary border-gray-300 rounded focus:ring-primary"
+                  />
+                  <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
+                    I agree to the{' '}
+                    <a href="#" className="text-primary hover:underline">
+                      Terms and Conditions
+                    </a>{' '}
+                    and{' '}
+                    <a href="#" className="text-primary hover:underline">
+                      Privacy Policy
+                    </a>
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-blue-600 transition-colors font-bold text-sm shadow-md flex items-center justify-center gap-2 active:scale-95 disabled:bg-blue-400 disabled:cursor-not-allowed transition-all"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Creating Account...
+                    </>
+                  ) : (
+                    'Create Account'
+                  )}
+                </button>
+              </form>
+
+              {/* Social Signup */}
+              <div className="mt-6">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">Or sign up with</span>
+                  </div>
+                </div>
+
+                <div className="mt-6 grid grid-cols-2 gap-3 items-center">
+                  <div className="flex justify-center w-full">
+                    <GoogleLogin
+                      onSuccess={handleGoogleSuccess}
+                      onError={() => {
+                        console.log('Signup Failed');
+                      }}
+                      type="standard"
+                      theme="outline"
+                      size="large"
+                      text="signup_with"
+                      shape="rectangular"
+                    />
+                  </div>
+                  <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <svg className="w-5 h-5 mr-2" fill="#1877F2" viewBox="0 0 24 24">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                    Facebook
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-start">
-              <input
-                type="checkbox"
-                id="terms"
-                required
-                className="w-4 h-4 mt-1 text-primary border-gray-300 rounded focus:ring-primary"
-              />
-              <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
-                I agree to the{' '}
-                <a href="#" className="text-primary hover:underline">
-                  Terms and Conditions
-                </a>{' '}
-                and{' '}
-                <a href="#" className="text-primary hover:underline">
-                  Privacy Policy
-                </a>
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-blue-600 transition-colors font-bold text-sm shadow-md"
-            >
-              Create Account
-            </button>
-          </form>
-
-          {/* Social Signup */}
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or sign up with</span>
-              </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-3 items-center">
-              <div className="flex justify-center w-full">
-                <GoogleLogin
-                  onSuccess={handleGoogleSuccess}
-                  onError={() => {
-                    console.log('Signup Failed');
-                  }}
-                  type="standard"
-                  theme="outline"
-                  size="large"
-                  text="signup_with"
-                  shape="rectangular"
-                />
-              </div>
-              <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                <svg className="w-5 h-5 mr-2" fill="#1877F2" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-                Facebook
-              </button>
-            </div>
-          </div>
-
-          {/* Login Link */}
-          <p className="mt-4 text-center text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link to="/login" className="text-primary hover:underline font-medium">
-              Sign in
-            </Link>
-          </p>
+              {/* Login Link */}
+              <p className="mt-4 text-center text-sm text-gray-600">
+                Already have an account?{' '}
+                <Link to="/login" className="text-primary hover:underline font-medium">
+                  Sign in
+                </Link>
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

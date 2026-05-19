@@ -1,84 +1,11 @@
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { categories, blogs, trendingTopics } from '../data/blogsData';
 
 export default function Blogs() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-
-  const categories = ['All', 'Cardiology', 'Pediatrics', 'Mental Health', 'Nutrition', 'Fitness', 'General Health'];
-
-  const blogs = [
-    {
-      id: 1,
-      title: '10 Tips for a Healthy Heart',
-      description: 'Learn essential practices to maintain cardiovascular health and prevent heart disease. From diet to exercise, discover what keeps your heart strong.',
-      category: 'Cardiology',
-      image: 'https://images.unsplash.com/photo-1546553836-33b20490e87e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoZWFsdGglMjBibG9nJTIwd2VsbG5lc3N8ZW58MXx8fHwxNzc2NDA1MDE2fDA&ixlib=rb-4.1.0&q=80&w=1080',
-      author: 'Dr. Amit Sharma',
-      date: 'April 15, 2026',
-      readTime: '5 min read',
-    },
-    {
-      id: 2,
-      title: 'Understanding Diabetes Management',
-      description: 'A comprehensive guide to managing diabetes through diet, exercise, and medication. Expert advice for better blood sugar control.',
-      category: 'General Health',
-      image: 'https://images.unsplash.com/photo-1655313719494-1d700d4aedd4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGV0aG9zY29wZSUyMG1lZGljYWwlMjBlcXVpcG1lbnR8ZW58MXx8fHwxNzc2Mzg5MzIwfDA&ixlib=rb-4.1.0&q=80&w=1080',
-      author: 'Dr. Priya Patel',
-      date: 'April 14, 2026',
-      readTime: '7 min read',
-    },
-    {
-      id: 3,
-      title: 'Mental Health in Modern Times',
-      description: 'Addressing the importance of mental health and strategies for emotional well-being in today\'s fast-paced world.',
-      category: 'Mental Health',
-      image: 'https://images.unsplash.com/photo-1758691462126-2ee47c8bf9e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwY29uc3VsdGF0aW9uJTIwY2xpbmljfGVufDF8fHx8MTc3NjQwNTAxNHww&ixlib=rb-4.1.0&q=80&w=1080',
-      author: 'Dr. Sneha Reddy',
-      date: 'April 12, 2026',
-      readTime: '6 min read',
-    },
-    {
-      id: 4,
-      title: 'Nutrition Guide for Kids',
-      description: 'Essential nutrition tips for growing children. What parents need to know about balanced diets and healthy eating habits.',
-      category: 'Pediatrics',
-      image: 'https://images.unsplash.com/photo-1659352790848-b6455e5a2129?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBmYW1pbHklMjBoZWFsdGhjYXJlfGVufDF8fHx8MTc3NjQwNTAxM3ww&ixlib=rb-4.1.0&q=80&w=1080',
-      author: 'Dr. Rajesh Kumar',
-      date: 'April 10, 2026',
-      readTime: '5 min read',
-    },
-    {
-      id: 5,
-      title: 'Exercise and Bone Health',
-      description: 'How regular physical activity strengthens bones and prevents osteoporosis. A guide to exercises for better bone health.',
-      category: 'Fitness',
-      image: 'https://images.unsplash.com/photo-1546553836-33b20490e87e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoZWFsdGglMjBibG9nJTIwd2VsbG5lc3N8ZW58MXx8fHwxNzc2NDA1MDE2fDA&ixlib=rb-4.1.0&q=80&w=1080',
-      author: 'Dr. Vikram Singh',
-      date: 'April 8, 2026',
-      readTime: '4 min read',
-    },
-    {
-      id: 6,
-      title: 'Sleep and Heart Health Connection',
-      description: 'Discover the vital link between quality sleep and cardiovascular health. Tips for better sleep hygiene.',
-      category: 'Cardiology',
-      image: 'https://images.unsplash.com/photo-1655313719494-1d700d4aedd4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGV0aG9zY29wZSUyMG1lZGljYWwlMjBlcXVpcG1lbnR8ZW58MXx8fHwxNzc2Mzg5MzIwfDA&ixlib=rb-4.1.0&q=80&w=1080',
-      author: 'Dr. Ananya Desai',
-      date: 'April 6, 2026',
-      readTime: '6 min read',
-    },
-  ];
-
-  const trendingTopics = [
-    'Heart Health',
-    'Diabetes Care',
-    'Mental Wellness',
-    'Child Nutrition',
-    'Exercise Tips',
-    'Preventive Care',
-  ];
 
   const filteredBlogs = blogs.filter((blog) => {
     const matchesCategory = selectedCategory === 'All' || blog.category === selectedCategory;

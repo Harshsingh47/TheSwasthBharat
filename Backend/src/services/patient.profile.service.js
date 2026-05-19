@@ -12,6 +12,7 @@ exports.updatePatientProfileService = async (userId, data) => {
     emergencyContactName,
     emergencyContactPhone,
     volunteerInterest,
+    profilePicture,
   } = data;
 
   const existingProfile = await prisma.patientProfile.findUnique({
@@ -20,6 +21,15 @@ exports.updatePatientProfileService = async (userId, data) => {
 
   if (!existingProfile) {
     throw new Error("Patient profile not found");
+  }
+
+  if (profilePicture) {
+    const { uploadFileToCDN } = require("./upload.service");
+    const cdnUrl = await uploadFileToCDN(profilePicture);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl: cdnUrl }
+    });
   }
 
   const updatedProfile = await prisma.patientProfile.update({
@@ -52,6 +62,7 @@ exports.getPatientProfileService = async (userId) => {
           name: true,
           email: true,
           phone: true,
+          avatarUrl: true,
         },
       },
     },

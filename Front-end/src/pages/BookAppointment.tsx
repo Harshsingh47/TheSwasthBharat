@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { Calendar, Clock, User, Phone, Mail, CheckCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { useQuery } from '@tanstack/react-query';
+import { getDoctorDetails, getDoctorSlots } from '../features/find-doctors/api/getDoctors';
+import axiosInstance from '../lib/axios';
 
 export default function BookAppointment() {
   const { doctorId } = useParams();
@@ -17,27 +21,19 @@ export default function BookAppointment() {
     symptoms: '',
   });
 
-  // Mock doctor data
-  const doctor = {
-    name: 'Dr. Amit Sharma',
-    specialty: 'Cardiologist',
-    fee: 800,
-  };
+  // Fetch real doctor data
+  const { data: doctor, isLoading: isLoadingDoctor } = useQuery({
+    queryKey: ['doctor', doctorId],
+    queryFn: () => getDoctorDetails(doctorId!),
+    enabled: !!doctorId,
+  });
 
-  const timeSlots = [
-    '9:00 AM',
-    '9:30 AM',
-    '10:00 AM',
-    '10:30 AM',
-    '11:00 AM',
-    '11:30 AM',
-    '2:00 PM',
-    '2:30 PM',
-    '3:00 PM',
-    '3:30 PM',
-    '4:00 PM',
-    '4:30 PM',
-  ];
+  // Fetch available slots for the selected date
+  const { data: timeSlots = [], isLoading: isLoadingSlots } = useQuery({
+    queryKey: ['doctorSlots', doctorId, formData.date],
+    queryFn: () => getDoctorSlots(doctorId!, formData.date),
+    enabled: !!formData.date && !!doctorId,
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -46,23 +42,43 @@ export default function BookAppointment() {
     });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep === 1 && (!formData.date || !formData.timeSlot)) {
-      alert('Please select date and time');
+      toast.error('Please select date and time');
       return;
     }
     if (currentStep === 2 && (!formData.patientName || !formData.age || !formData.gender || !formData.phone)) {
-      alert('Please fill all required fields');
+      toast.error('Please fill all required fields');
       return;
     }
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Handle booking confirmation
-      alert('Appointment booked successfully!');
-      navigate('/dashboard');
+      // Final Step: Submit Booking
+      try {
+        // Construct the strict datetime for the backend
+        const appointmentDate = new Date(`${formData.date}T${formData.timeSlot}:00`);
+
+        await axiosInstance.post('/api/appointments', {
+          doctorId,
+          date: appointmentDate.toISOString(),
+          reason: formData.symptoms || 'General Consultation',
+        });
+
+        toast.success('Appointment booked successfully!');
+        navigate('/dashboard');
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || 'Failed to book appointment');
+      }
     }
   };
+
+  if (isLoadingDoctor) {
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>;
+  }
+  if (!doctor) {
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">Doctor not found.</div>;
+  }
 
   const handleBack = () => {
     if (currentStep > 1) {
@@ -76,7 +92,7 @@ export default function BookAppointment() {
         {/* Header */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-8">
           <h1 className="text-3xl font-bold mb-2">Book Appointment</h1>
-          <p className="text-gray-600">with {doctor.name} - {doctor.specialty}</p>
+          <p className="text-gray-600">with {doctor?.user?.name} - {doctor?.specialty}</p>
         </div>
 
         {/* Progress Steps */}
@@ -130,19 +146,27 @@ export default function BookAppointment() {
               <div>
                 <label className="block text-sm font-medium mb-3">Select Time Slot</label>
                 <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
-                  {timeSlots.map((slot) => (
-                    <button
-                      key={slot}
-                      onClick={() => setFormData({ ...formData, timeSlot: slot })}
-                      className={`px-4 py-3 border rounded-lg transition-all ${
-                        formData.timeSlot === slot
-                          ? 'bg-primary text-white border-primary'
-                          : 'border-gray-300 hover:border-primary hover:bg-blue-50'
-                      }`}
-                    >
-                      {slot}
-                    </button>
-                  ))}
+                  {isLoadingSlots ? (
+                    <p className="text-sm text-gray-500 col-span-full">Loading available slots...</p>
+                  ) : timeSlots.length === 0 && formData.date ? (
+                    <p className="text-sm text-red-500 col-span-full">No slots available for this date.</p>
+                  ) : !formData.date ? (
+                    <p className="text-sm text-gray-500 col-span-full">Please select a date first.</p>
+                  ) : (
+                    timeSlots.map((slot: any) => (
+                      <button
+                        key={slot.start}
+                        onClick={() => setFormData({ ...formData, timeSlot: slot.start })}
+                        className={`px-4 py-3 border rounded-lg transition-all ${
+                          formData.timeSlot === slot.start
+                            ? 'bg-primary text-white border-primary'
+                            : 'border-gray-300 hover:border-primary hover:bg-blue-50'
+                        }`}
+                      >
+                        {slot.start}
+                      </button>
+                    ))
+                  )}
                 </div>
               </div>
             </div>

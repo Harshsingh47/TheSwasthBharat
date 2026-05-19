@@ -12,6 +12,6 @@ const { authMiddleware, isPatient } = require("../middleware/auth.middleware");
 router.post("/", authMiddleware, isPatient, createAppointment);
 
 // GET MY APPOINTMENTS
-router.get("/my", authMiddleware, isPatient, getMyAppointments);
+router.get("/my", authMiddleware, getMyAppointments);
 
 module.exports = router;
